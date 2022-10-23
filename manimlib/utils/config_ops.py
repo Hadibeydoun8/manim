@@ -92,5 +92,6 @@ def digest_locals(obj, keys=None):
 
 
 class DictAsObject:
+
     def __init__(self, dict):
         self.__dict__ = dict
