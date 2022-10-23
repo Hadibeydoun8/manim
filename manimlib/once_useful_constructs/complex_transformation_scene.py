@@ -51,8 +51,7 @@ class ComplexTransformationScene(Scene):
         Scene.play(
             self,
             *list(animations) + list(map(Animation, self.foreground_mobjects)),
-            **kwargs
-        )
+            **kwargs)
 
     def add_background_plane(self):
         background = ComplexPlane(**self.plane_config)
@@ -77,11 +76,11 @@ class ComplexTransformationScene(Scene):
         if x_range is not None:
             x_min, x_max = x_range
             plane_config["x_radius"] = x_max - x_min
-            shift_val += (x_max + x_min) * RIGHT / 2.
+            shift_val += (x_max + x_min) * RIGHT / 2.0
         if y_range is not None:
             y_min, y_max = y_range
             plane_config["y_radius"] = y_max - y_min
-            shift_val += (y_max + y_min) * UP / 2.
+            shift_val += (y_max + y_min) * UP / 2.0
         plane = ComplexPlane(**plane_config)
         plane.shift(shift_val)
         if self.use_multicolored_plane:
@@ -91,8 +90,7 @@ class ComplexTransformationScene(Scene):
     def prepare_for_transformation(self, mob):
         if hasattr(mob, "prepare_for_nonlinear_transform"):
             mob.prepare_for_nonlinear_transform(
-                self.num_anchors_to_add_per_line
-            )
+                self.num_anchors_to_add_per_line)
         # TODO...
 
     def paint_plane(self, plane):
@@ -121,12 +119,14 @@ class ComplexTransformationScene(Scene):
         transformer.add(*self.transformable_mobjects)
         return transformer, transform_kwargs
 
-    def apply_complex_function(self, func, added_anims=[], **kwargs):
+    def apply_complex_function(self, func, added_anims=None, **kwargs):
+        if added_anims is None:
+            added_anims = []
         transformer, transform_kwargs = self.get_transformer(**kwargs)
         transformer.generate_target()
         # Rescale, apply function, scale back
         transformer.target.shift(-self.background.get_center_point())
-        transformer.target.scale(1. / self.background.unit_size)
+        transformer.target.scale(1.0 / self.background.unit_size)
         transformer.target.apply_complex_function(func)
         transformer.target.scale(self.background.unit_size)
         transformer.target.shift(self.background.get_center_point())
@@ -137,12 +137,14 @@ class ComplexTransformationScene(Scene):
         if self.post_transformation_stroke_width is not None:
             transformer.target.set_stroke(
                 width=self.post_transformation_stroke_width)
-        self.play(
-            MoveToTarget(transformer, **transform_kwargs),
-            *added_anims
-        )
+        self.play(MoveToTarget(transformer, **transform_kwargs), *added_anims)
 
-    def apply_complex_homotopy(self, complex_homotopy, added_anims=[], **kwargs):
+    def apply_complex_homotopy(self,
+                               complex_homotopy,
+                               added_anims=None,
+                               **kwargs):
+        if added_anims is None:
+            added_anims = []
         transformer, transform_kwargs = self.get_transformer(**kwargs)
 
         # def homotopy(x, y, z, t):
@@ -152,5 +154,4 @@ class ComplexTransformationScene(Scene):
 
         self.play(
             ComplexHomotopy(complex_homotopy, transformer, **transform_kwargs),
-            *added_anims
-        )
+            *added_anims)
