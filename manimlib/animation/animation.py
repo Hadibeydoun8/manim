@@ -1,30 +1,27 @@
 from __future__ import annotations
 
 from copy import deepcopy
-
-from manimlib.mobject.mobject import _AnimationBuilder
-from manimlib.mobject.mobject import Mobject
-from manimlib.utils.config_ops import digest_config
-from manimlib.utils.rate_functions import smooth
-from manimlib.utils.rate_functions import squish_rate_func
-from manimlib.utils.simple_functions import clip
-
 from typing import TYPE_CHECKING
+
+from manimlib.mobject.mobject import Mobject, _AnimationBuilder
+from manimlib.utils.config_ops import digest_config
+from manimlib.utils.rate_functions import smooth, squish_rate_func
+from manimlib.utils.simple_functions import clip
 
 if TYPE_CHECKING:
     from typing import Callable
 
     from manimlib.scene.scene import Scene
 
-
 DEFAULT_ANIMATION_RUN_TIME = 1.0
 DEFAULT_ANIMATION_LAG_RATIO = 0
 
 
-class Animation(object):
+class Animation:
     CONFIG = {
         "run_time": DEFAULT_ANIMATION_RUN_TIME,
-        "time_span": None,  # Tuple of times, between which the animation will run
+        "time_span":
+        None,  # Tuple of times, between which the animation will run
         "rate_func": smooth,
         "name": None,
         # Does this animation add or remove a mobject form the screen
@@ -41,7 +38,7 @@ class Animation(object):
     }
 
     def __init__(self, mobject: Mobject, **kwargs):
-        assert(isinstance(mobject, Mobject))
+        assert isinstance(mobject, Mobject)
         digest_config(self, kwargs)
         self.mobject = mobject
 
@@ -59,7 +56,9 @@ class Animation(object):
             start, end = self.time_span
             self.run_time = max(end, self.run_time)
             self.rate_func = squish_rate_func(
-                self.rate_func, start / self.run_time, end / self.run_time,
+                self.rate_func,
+                start / self.run_time,
+                end / self.run_time,
             )
         self.mobject.set_animating_status(True)
         self.starting_mobject = self.create_starting_mobject()
@@ -95,10 +94,7 @@ class Animation(object):
         return self.mobject, self.starting_mobject
 
     def get_all_families_zipped(self) -> zip[tuple[Mobject]]:
-        return zip(*[
-            mob.get_family()
-            for mob in self.get_all_mobjects()
-        ])
+        return zip(*[mob.get_family() for mob in self.get_all_mobjects()])
 
     def update_mobjects(self, dt: float) -> None:
         """
@@ -115,10 +111,8 @@ class Animation(object):
         # The surrounding scene typically handles
         # updating of self.mobject.  Besides, in
         # most cases its updating is suspended anyway
-        return list(filter(
-            lambda m: m is not self.mobject,
-            self.get_all_mobjects()
-        ))
+        return list(
+            filter(lambda m: m is not self.mobject, self.get_all_mobjects()))
 
     def copy(self):
         return deepcopy(self)
@@ -144,21 +138,13 @@ class Animation(object):
             sub_alpha = self.get_sub_alpha(alpha, i, len(self.families))
             self.interpolate_submobject(*mobs, sub_alpha)
 
-    def interpolate_submobject(
-        self,
-        submobject: Mobject,
-        starting_submobject: Mobject,
-        alpha: float
-    ):
+    def interpolate_submobject(self, submobject: Mobject,
+                               starting_submobject: Mobject, alpha: float):
         # Typically ipmlemented by subclass
         pass
 
-    def get_sub_alpha(
-        self,
-        alpha: float,
-        index: int,
-        num_submobjects: int
-    ) -> float:
+    def get_sub_alpha(self, alpha: float, index: int,
+                      num_submobjects: int) -> float:
         # TODO, make this more understanable, and/or combine
         # its functionality with AnimationGroup's method
         # build_animations_with_timings

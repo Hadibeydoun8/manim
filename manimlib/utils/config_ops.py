@@ -91,7 +91,6 @@ def digest_locals(obj, keys=None):
 # (and less in keeping with all other attr accesses) dict["x"]
 
 
-class DictAsObject(object):
-
+class DictAsObject:
     def __init__(self, dict):
         self.__dict__ = dict

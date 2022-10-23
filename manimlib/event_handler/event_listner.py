@@ -9,12 +9,13 @@ if TYPE_CHECKING:
     from manimlib.mobject.mobject import Mobject
 
 
-class EventListner(object):
+class EventListner:
+
     def __init__(
         self,
         mobject: Mobject,
         event_type: EventType,
-        event_callback: Callable[[Mobject, dict[str]]]
+        event_callback: Callable[[Mobject, dict[str]]],
     ):
         self.mobject = mobject
         self.event_type = event_type
@@ -23,9 +24,9 @@ class EventListner(object):
     def __eq__(self, o: object) -> bool:
         return_val = False
         try:
-            return_val = self.callback == o.callback \
-                and self.mobject == o.mobject \
-                and self.event_type == o.event_type
+            return_val = (self.callback == o.callback
+                          and self.mobject == o.mobject
+                          and self.event_type == o.event_type)
         except:
             pass
         return return_val
