@@ -6,7 +6,6 @@ import numpy as np
 
 from manimlib.animation.animation import Animation
 from manimlib.mobject.svg.string_mobject import StringMobject
-from manimlib.mobject.types.vectorized_mobject import VGroup
 from manimlib.mobject.types.vectorized_mobject import VMobject
 from manimlib.utils.bezier import integer_interpolate
 from manimlib.utils.config_ops import digest_config

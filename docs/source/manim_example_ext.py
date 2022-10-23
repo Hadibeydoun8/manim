@@ -1,8 +1,7 @@
 from docutils import nodes
-from docutils.parsers.rst import directives, Directive
+from docutils.parsers.rst import Directive
 
 import jinja2
-import os
 
 
 class skip_manim_node(nodes.Admonition, nodes.Element):
