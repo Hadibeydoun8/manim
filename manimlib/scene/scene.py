@@ -292,17 +292,13 @@ class Scene(object):
             mobject.update(dt)
 
     def should_update_mobjects(self) -> bool:
-        return self.always_update_mobjects or any([
-            len(mob.get_family_updaters()) > 0
-            for mob in self.mobjects
-        ])
+        return self.always_update_mobjects or any(len(mob.get_family_updaters()) > 0
+            for mob in self.mobjects)
 
     def has_time_based_updaters(self) -> bool:
-        return any([
-            sm.has_time_based_updater()
+        return any(sm.has_time_based_updater()
             for mob in self.mobjects()
-            for sm in mob.get_family()
-        ])
+            for sm in mob.get_family())
 
     # Related to time
 

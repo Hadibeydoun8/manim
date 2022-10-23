@@ -1138,7 +1138,7 @@ class VMobject(Mobject):
 
 class VGroup(VMobject):
     def __init__(self, *vmobjects: VMobject, **kwargs):
-        if not all([isinstance(m, VMobject) for m in vmobjects]):
+        if not all(isinstance(m, VMobject) for m in vmobjects):
             raise Exception("All submobjects must be of type VMobject")
         super().__init__(**kwargs)
         self.add(*vmobjects)

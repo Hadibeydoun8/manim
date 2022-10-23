@@ -1978,7 +1978,7 @@ class Mobject(object):
 
 class Group(Mobject):
     def __init__(self, *mobjects: Mobject, **kwargs):
-        if not all([isinstance(m, Mobject) for m in mobjects]):
+        if not all(isinstance(m, Mobject) for m in mobjects):
             raise Exception("All submobjects must be of type Mobject")
         Mobject.__init__(self, **kwargs)
         self.add(*mobjects)
