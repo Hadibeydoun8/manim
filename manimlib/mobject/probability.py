@@ -226,7 +226,7 @@ class BarChart(VGroup):
             y_ticks.add(y_tick)
         y_axis.add(y_ticks)
 
-        if self.include_x_ticks == True:
+        if self.include_x_ticks is True:
             x_ticks = VGroup()
             widths = np.linspace(0, self.width, self.n_ticks_x + 1)
             label_values = np.linspace(0, len(self.bar_names), self.n_ticks_x + 1)
