@@ -1,27 +1,24 @@
 from __future__ import annotations
 
 import itertools as it
+from typing import TYPE_CHECKING
 
 import numpy as np
 
 from manimlib.animation.composition import AnimationGroup
-from manimlib.animation.fading import FadeInFromPoint
-from manimlib.animation.fading import FadeOutToPoint
-from manimlib.animation.fading import FadeTransformPieces
-from manimlib.animation.transform import ReplacementTransform
-from manimlib.animation.transform import Transform
-from manimlib.mobject.mobject import Mobject
-from manimlib.mobject.mobject import Group
+from manimlib.animation.fading import (
+    FadeInFromPoint,
+    FadeOutToPoint,
+    FadeTransformPieces,
+)
+from manimlib.animation.transform import ReplacementTransform, Transform
+from manimlib.mobject.mobject import Group, Mobject
 from manimlib.mobject.svg.string_mobject import StringMobject
-from manimlib.mobject.types.vectorized_mobject import VGroup
-from manimlib.mobject.types.vectorized_mobject import VMobject
+from manimlib.mobject.types.vectorized_mobject import VGroup, VMobject
 from manimlib.utils.config_ops import digest_config
 
-from typing import TYPE_CHECKING
-
 if TYPE_CHECKING:
-    from manimlib.mobject.svg.tex_mobject import SingleStringTex
-    from manimlib.mobject.svg.tex_mobject import Tex
+    from manimlib.mobject.svg.tex_mobject import SingleStringTex, Tex
     from manimlib.scene.scene import Scene
 
 
@@ -31,13 +28,13 @@ class TransformMatchingParts(AnimationGroup):
         "group_type": Group,
         "transform_mismatches": False,
         "fade_transform_mismatches": False,
-        "key_map": dict(),
+        "key_map": {},
     }
 
     def __init__(self, mobject: Mobject, target_mobject: Mobject, **kwargs):
         digest_config(self, kwargs)
-        assert(isinstance(mobject, self.mobject_type))
-        assert(isinstance(target_mobject, self.mobject_type))
+        assert isinstance(mobject, self.mobject_type)
+        assert isinstance(target_mobject, self.mobject_type)
         source_map = self.get_shape_map(mobject)
         target_map = self.get_shape_map(target_mobject)
 
@@ -62,10 +59,11 @@ class TransformMatchingParts(AnimationGroup):
                 source_map.pop(key1, None)
                 target_map.pop(key2, None)
         if len(key_mapped_source) > 0:
-            anims.append(FadeTransformPieces(
-                key_mapped_source,
-                key_mapped_target,
-            ))
+            anims.append(
+                FadeTransformPieces(
+                    key_mapped_source,
+                    key_mapped_target,
+                ))
 
         fade_source = self.group_type()
         fade_target = self.group_type()
@@ -77,14 +75,15 @@ class TransformMatchingParts(AnimationGroup):
         if self.transform_mismatches:
             anims.append(Transform(fade_source.copy(), fade_target, **kwargs))
         if self.fade_transform_mismatches:
-            anims.append(FadeTransformPieces(fade_source, fade_target, **kwargs))
+            anims.append(
+                FadeTransformPieces(fade_source, fade_target, **kwargs))
         else:
-            anims.append(FadeOutToPoint(
-                fade_source, target_mobject.get_center(), **kwargs
-            ))
-            anims.append(FadeInFromPoint(
-                fade_target.copy(), mobject.get_center(), **kwargs
-            ))
+            anims.append(
+                FadeOutToPoint(fade_source, target_mobject.get_center(),
+                               **kwargs))
+            anims.append(
+                FadeInFromPoint(fade_target.copy(), mobject.get_center(),
+                                **kwargs))
 
         super().__init__(*anims)
 
@@ -159,72 +158,65 @@ class TransformMatchingStrings(AnimationGroup):
         "transform_mismatches": False,
     }
 
-    def __init__(self,
-        source: StringMobject,
-        target: StringMobject,
-        **kwargs
-    ):
+    def __init__(self, source: StringMobject, target: StringMobject, **kwargs):
         digest_config(self, kwargs)
         assert isinstance(source, StringMobject)
         assert isinstance(target, StringMobject)
 
         def get_matched_indices_lists(*part_items_list):
             part_items_list_len = len(part_items_list)
-            indexed_part_items = sorted(it.chain(*[
-                [
-                    (substr, items_index, indices_list)
-                    for substr, indices_list in part_items
-                ]
-                for items_index, part_items in enumerate(part_items_list)
-            ]))
-            grouped_part_items = [
-                (substr, [
-                    [indices_lists for _, _, indices_lists in grouper_2]
-                    for _, grouper_2 in it.groupby(
-                        grouper_1, key=lambda t: t[1]
-                    )
-                ])
-                for substr, grouper_1 in it.groupby(
-                    indexed_part_items, key=lambda t: t[0]
-                )
-            ]
+            indexed_part_items = sorted(
+                it.chain(*[[(substr, items_index, indices_list)
+                            for substr, indices_list in part_items]
+                           for items_index, part_items in enumerate(
+                               part_items_list)]))
+            grouped_part_items = [(
+                substr,
+                [[indices_lists for _, _, indices_lists in grouper_2]
+                 for _, grouper_2 in it.groupby(grouper_1, key=lambda t: t[1])
+                 ],
+            ) for substr, grouper_1 in it.groupby(indexed_part_items,
+                                                  key=lambda t: t[0])]
             return [
-                tuple(indices_lists_list)
-                for _, indices_lists_list in sorted(filter(
-                    lambda t: t[0] and len(t[1]) == part_items_list_len,
-                    grouped_part_items
-                ), key=lambda t: len(t[0]), reverse=True)
+                tuple(indices_lists_list) for _, indices_lists_list in sorted(
+                    filter(
+                        lambda t: t[0] and len(t[1]) == part_items_list_len,
+                        grouped_part_items,
+                    ),
+                    key=lambda t: len(t[0]),
+                    reverse=True,
+                )
             ]
 
         def get_filtered_indices_lists(indices_lists, used_indices):
             result = []
             used = []
             for indices_list in indices_lists:
-                if not all(
-                    index not in used_indices and index not in used
-                    for index in indices_list
-                ):
+                if not all(index not in used_indices and index not in used
+                           for index in indices_list):
                     continue
                 result.append(indices_list)
                 used.extend(indices_list)
             return result, used
 
         anim_class_items = [
-            (ReplacementTransform, [
-                (
+            (
+                ReplacementTransform,
+                [(
                     source.get_submob_indices_lists_by_selector(k),
-                    target.get_submob_indices_lists_by_selector(v)
-                )
-                for k, v in self.key_map.items()
-            ]),
-            (FadeTransformPieces, get_matched_indices_lists(
-                source.get_specified_part_items(),
-                target.get_specified_part_items()
-            )),
-            (FadeTransformPieces, get_matched_indices_lists(
-                source.get_group_part_items(),
-                target.get_group_part_items()
-            ))
+                    target.get_submob_indices_lists_by_selector(v),
+                ) for k, v in self.key_map.items()],
+            ),
+            (
+                FadeTransformPieces,
+                get_matched_indices_lists(source.get_specified_part_items(),
+                                          target.get_specified_part_items()),
+            ),
+            (
+                FadeTransformPieces,
+                get_matched_indices_lists(source.get_group_part_items(),
+                                          target.get_group_part_items()),
+            ),
         ]
 
         anims = []
@@ -233,18 +225,17 @@ class TransformMatchingStrings(AnimationGroup):
         for anim_class, pairs in anim_class_items:
             for source_indices_lists, target_indices_lists in pairs:
                 source_filtered, source_used = get_filtered_indices_lists(
-                    source_indices_lists, source_used_indices
-                )
+                    source_indices_lists, source_used_indices)
                 target_filtered, target_used = get_filtered_indices_lists(
-                    target_indices_lists, target_used_indices
-                )
+                    target_indices_lists, target_used_indices)
                 if not source_filtered or not target_filtered:
                     continue
-                anims.append(anim_class(
-                    source.build_parts_from_indices_lists(source_filtered),
-                    target.build_parts_from_indices_lists(target_filtered),
-                    **kwargs
-                ))
+                anims.append(
+                    anim_class(
+                        source.build_parts_from_indices_lists(source_filtered),
+                        target.build_parts_from_indices_lists(target_filtered),
+                        **kwargs,
+                    ))
                 source_used_indices.extend(source_used)
                 target_used_indices.extend(target_used)
 
@@ -258,14 +249,11 @@ class TransformMatchingStrings(AnimationGroup):
         ])
         if self.transform_mismatches:
             anims.append(
-                ReplacementTransform(rest_source, rest_target, **kwargs)
-            )
+                ReplacementTransform(rest_source, rest_target, **kwargs))
         else:
             anims.append(
-                FadeOutToPoint(rest_source, target.get_center(), **kwargs)
-            )
+                FadeOutToPoint(rest_source, target.get_center(), **kwargs))
             anims.append(
-                FadeInFromPoint(rest_target, source.get_center(), **kwargs)
-            )
+                FadeInFromPoint(rest_target, source.get_center(), **kwargs))
 
         super().__init__(*anims)
