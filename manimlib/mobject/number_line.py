@@ -1,20 +1,16 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import numpy as np
 
-from manimlib.constants import DOWN, LEFT, RIGHT, UP
-from manimlib.constants import GREY_B
-from manimlib.constants import MED_SMALL_BUFF
+from manimlib.constants import DOWN, GREY_B, LEFT, MED_SMALL_BUFF, RIGHT, UP
 from manimlib.mobject.geometry import Line
 from manimlib.mobject.numbers import DecimalNumber
 from manimlib.mobject.types.vectorized_mobject import VGroup
-from manimlib.utils.bezier import interpolate
-from manimlib.utils.bezier import outer_interpolate
-from manimlib.utils.config_ops import digest_config
-from manimlib.utils.config_ops import merge_dicts_recursively
+from manimlib.utils.bezier import interpolate, outer_interpolate
+from manimlib.utils.config_ops import digest_config, merge_dicts_recursively
 from manimlib.utils.simple_functions import fdiv
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing import Iterable, Sequence
@@ -47,7 +43,7 @@ class NumberLine(Line):
             "num_decimal_places": 0,
             "font_size": 36,
         },
-        "numbers_to_exclude": None
+        "numbers_to_exclude": None,
     }
 
     def __init__(self, x_range: Sequence[float] | None = None, **kwargs):
@@ -143,22 +139,19 @@ class NumberLine(Line):
         x: float,
         direction: np.ndarray | None = None,
         buff: float | None = None,
-        **number_config
+        **number_config,
     ) -> DecimalNumber:
-        number_config = merge_dicts_recursively(
-            self.decimal_number_config, number_config
-        )
+        number_config = merge_dicts_recursively(self.decimal_number_config,
+                                                number_config)
         if direction is None:
             direction = self.line_to_number_direction
         if buff is None:
             buff = self.line_to_number_buff
 
         num_mob = DecimalNumber(x, **number_config)
-        num_mob.next_to(
-            self.number_to_point(x),
-            direction=direction,
-            buff=buff
-        )
+        num_mob.next_to(self.number_to_point(x),
+                        direction=direction,
+                        buff=buff)
         if x < 0 and direction[0] == 0:
             # Align without the minus sign
             num_mob.shift(num_mob[0].get_width() * LEFT / 2)
@@ -169,7 +162,7 @@ class NumberLine(Line):
         x_values: Iterable[float] | None = None,
         excluding: Iterable[float] | None = None,
         font_size: int = 24,
-        **kwargs
+        **kwargs,
     ) -> VGroup:
         if x_values is None:
             x_values = self.get_tick_range()
@@ -196,5 +189,5 @@ class UnitInterval(NumberLine):
         "numbers_with_elongated_ticks": [0, 1],
         "decimal_number_config": {
             "num_decimal_places": 1,
-        }
+        },
     }

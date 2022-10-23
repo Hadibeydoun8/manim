@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-from isosurfaces import plot_isoline
-import numpy as np
+from typing import TYPE_CHECKING
 
-from manimlib.constants import FRAME_X_RADIUS, FRAME_Y_RADIUS
-from manimlib.constants import YELLOW
+import numpy as np
+from isosurfaces import plot_isoline
+
+from manimlib.constants import FRAME_X_RADIUS, FRAME_Y_RADIUS, YELLOW
 from manimlib.mobject.types.vectorized_mobject import VMobject
 from manimlib.utils.config_ops import digest_config
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing import Callable, Sequence
@@ -27,7 +26,7 @@ class ParametricCurve(VMobject):
         self,
         t_func: Callable[[float], np.ndarray],
         t_range: Sequence[float] | None = None,
-        **kwargs
+        **kwargs,
     ):
         digest_config(self, kwargs)
         if t_range is not None:
@@ -49,7 +48,12 @@ class ParametricCurve(VMobject):
 
         jumps = np.array(self.discontinuities)
         jumps = jumps[(jumps > t_min) & (jumps < t_max)]
-        boundary_times = [t_min, t_max, *(jumps - self.epsilon), *(jumps + self.epsilon)]
+        boundary_times = [
+            t_min,
+            t_max,
+            *(jumps - self.epsilon),
+            *(jumps + self.epsilon),
+        ]
         boundary_times.sort()
         for t1, t2 in zip(boundary_times[0::2], boundary_times[1::2]):
             t_range = [*np.arange(t1, t2, step), t2]
@@ -86,7 +90,7 @@ class FunctionGraph(ParametricCurve):
         self,
         function: Callable[[float], float],
         x_range: Sequence[float] | None = None,
-        **kwargs
+        **kwargs,
     ):
         digest_config(self, kwargs)
         self.function = function
@@ -106,14 +110,10 @@ class ImplicitFunction(VMobject):
         "y_range": [-FRAME_Y_RADIUS, FRAME_Y_RADIUS],
         "min_depth": 5,
         "max_quads": 1500,
-        "use_smoothing": True
+        "use_smoothing": True,
     }
 
-    def __init__(
-        self,
-        func: Callable[[float, float], float],
-        **kwargs
-    ):
+    def __init__(self, func: Callable[[float, float], float], **kwargs):
         digest_config(self, kwargs)
         self.function = func
         super().__init__(**kwargs)

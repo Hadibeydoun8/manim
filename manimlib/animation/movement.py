@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from manimlib.animation.animation import Animation
 from manimlib.utils.rate_functions import linear
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing import Callable, Sequence
@@ -23,7 +23,7 @@ class Homotopy(Animation):
         self,
         homotopy: Callable[[float, float, float, float], Sequence[float]],
         mobject: Mobject,
-        **kwargs
+        **kwargs,
     ):
         """
         Homotopy is a function from
@@ -33,45 +33,42 @@ class Homotopy(Animation):
         super().__init__(mobject, **kwargs)
 
     def function_at_time_t(
-        self,
-        t: float
-    ) -> Callable[[np.ndarray], Sequence[float]]:
+            self, t: float) -> Callable[[np.ndarray], Sequence[float]]:
         return lambda p: self.homotopy(*p, t)
 
-    def interpolate_submobject(
-        self,
-        submob: Mobject,
-        start: Mobject,
-        alpha: float
-    ) -> None:
+    def interpolate_submobject(self, submob: Mobject, start: Mobject,
+                               alpha: float) -> None:
         submob.match_points(start)
-        submob.apply_function(
-            self.function_at_time_t(alpha),
-            **self.apply_function_kwargs
-        )
+        submob.apply_function(self.function_at_time_t(alpha),
+                              **self.apply_function_kwargs)
 
 
 class SmoothedVectorizedHomotopy(Homotopy):
     CONFIG = {
-        "apply_function_kwargs": {"make_smooth": True},
+        "apply_function_kwargs": {
+            "make_smooth": True
+        },
     }
 
 
 class ComplexHomotopy(Homotopy):
+
     def __init__(
         self,
         complex_homotopy: Callable[[complex, float], Sequence[float]],
         mobject: Mobject,
-        **kwargs
+        **kwargs,
     ):
         """
         Given a function form (z, t) -> w, where z and w
         are complex numbers and t is time, this animates
         the state over time
         """
+
         def homotopy(x, y, z, t):
             c = complex_homotopy(complex(x, y), t)
             return (c.real, c.imag, z)
+
         super().__init__(homotopy, mobject, **kwargs)
 
 
@@ -82,21 +79,15 @@ class PhaseFlow(Animation):
         "suspend_mobject_updating": False,
     }
 
-    def __init__(
-        self,
-        function: Callable[[np.ndarray], np.ndarray],
-        mobject: Mobject,
-        **kwargs
-    ):
+    def __init__(self, function: Callable[[np.ndarray], np.ndarray],
+                 mobject: Mobject, **kwargs):
         self.function = function
         super().__init__(mobject, **kwargs)
 
     def interpolate_mobject(self, alpha: float) -> None:
         if hasattr(self, "last_alpha"):
             dt = self.virtual_time * (alpha - self.last_alpha)
-            self.mobject.apply_function(
-                lambda p: p + dt * self.function(p)
-            )
+            self.mobject.apply_function(lambda p: p + dt * self.function(p))
         self.last_alpha = alpha
 
 

@@ -1,28 +1,22 @@
 from __future__ import annotations
 
 import math
+from typing import TYPE_CHECKING
 
 import numpy as np
 
 from manimlib.constants import OUT
 from manimlib.utils.bezier import interpolate
-from manimlib.utils.space_ops import get_norm
-from manimlib.utils.space_ops import rotation_matrix_transpose
-
-from typing import TYPE_CHECKING
+from manimlib.utils.space_ops import get_norm, rotation_matrix_transpose
 
 if TYPE_CHECKING:
     from typing import Callable
 
-
 STRAIGHT_PATH_THRESHOLD = 0.01
 
 
-def straight_path(
-    start_points: np.ndarray,
-    end_points: np.ndarray,
-    alpha: float
-) -> np.ndarray:
+def straight_path(start_points: np.ndarray, end_points: np.ndarray,
+                  alpha: float) -> np.ndarray:
     """
     Same function as interpolate, but renamed to reflect
     intent of being used to determine how a set of points move
@@ -33,7 +27,7 @@ def straight_path(
 
 
 def path_along_arc(
-    arc_angle: float, 
+    arc_angle: float,
     axis: np.ndarray = OUT
 ) -> Callable[[np.ndarray, np.ndarray, float], np.ndarray]:
     """
@@ -50,7 +44,8 @@ def path_along_arc(
         vects = end_points - start_points
         centers = start_points + 0.5 * vects
         if arc_angle != np.pi:
-            centers += np.cross(unit_axis, vects / 2.0) / math.tan(arc_angle / 2)
+            centers += np.cross(unit_axis, vects / 2.0) / math.tan(
+                arc_angle / 2)
         rot_matrix_T = rotation_matrix_transpose(alpha * arc_angle, unit_axis)
         return centers + np.dot(start_points - centers, rot_matrix_T)
 
@@ -61,5 +56,6 @@ def clockwise_path() -> Callable[[np.ndarray, np.ndarray, float], np.ndarray]:
     return path_along_arc(-np.pi)
 
 
-def counterclockwise_path() -> Callable[[np.ndarray, np.ndarray, float], np.ndarray]:
+def counterclockwise_path(
+) -> Callable[[np.ndarray, np.ndarray, float], np.ndarray]:
     return path_along_arc(np.pi)

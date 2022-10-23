@@ -12,14 +12,17 @@ from manimlib.utils.iterables import listify
 
 class ImageMobject(Mobject):
     CONFIG = {
-        "height": 4,
-        "opacity": 1,
-        "shader_folder": "image",
+        "height":
+        4,
+        "opacity":
+        1,
+        "shader_folder":
+        "image",
         "shader_dtype": [
-            ('point', np.float32, (3,)),
-            ('im_coords', np.float32, (2,)),
-            ('opacity', np.float32, (1,)),
-        ]
+            ("point", np.float32, (3, )),
+            ("im_coords", np.float32, (2, )),
+            ("opacity", np.float32, (1, )),
+        ],
     }
 
     def __init__(self, filename: str, **kwargs):

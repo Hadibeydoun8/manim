@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from manimlib.animation.transform import Transform
 from manimlib.constants import PI
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     import numpy as np
@@ -34,18 +34,21 @@ class GrowFromPoint(Transform):
 
 
 class GrowFromCenter(GrowFromPoint):
+
     def __init__(self, mobject: Mobject, **kwargs):
         point = mobject.get_center()
         super().__init__(mobject, point, **kwargs)
 
 
 class GrowFromEdge(GrowFromPoint):
+
     def __init__(self, mobject: Mobject, edge: np.ndarray, **kwargs):
         point = mobject.get_bounding_box_point(edge)
         super().__init__(mobject, point, **kwargs)
 
 
 class GrowArrow(GrowFromPoint):
+
     def __init__(self, arrow: Arrow, **kwargs):
         point = arrow.get_start()
         super().__init__(arrow, point, **kwargs)

@@ -1,25 +1,22 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import numpy as np
 
-from manimlib.animation.animation import Animation
-from manimlib.animation.animation import prepare_animation
+from manimlib.animation.animation import Animation, prepare_animation
 from manimlib.mobject.mobject import Group
-from manimlib.utils.bezier import integer_interpolate
-from manimlib.utils.bezier import interpolate
+from manimlib.utils.bezier import integer_interpolate, interpolate
 from manimlib.utils.config_ops import digest_config
 from manimlib.utils.iterables import remove_list_redundancies
 from manimlib.utils.rate_functions import linear
 from manimlib.utils.simple_functions import clip
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing import Callable
 
     from manimlib.mobject.mobject import Mobject
     from manimlib.scene.scene import Scene
-
 
 DEFAULT_LAGGED_START_LAG_RATIO = 0.05
 
@@ -43,8 +40,7 @@ class AnimationGroup(Animation):
         self.animations = [prepare_animation(anim) for anim in animations]
         if self.group is None:
             self.group = Group(*remove_list_redundancies(
-                [anim.mobject for anim in animations]
-            ))
+                [anim.mobject for anim in animations]))
         self.init_run_time()
         Animation.__init__(self, self.group, **kwargs)
 
@@ -73,9 +69,8 @@ class AnimationGroup(Animation):
     def init_run_time(self) -> None:
         self.build_animations_with_timings()
         if self.anims_with_timings:
-            self.max_end_time = np.max([
-                awt[2] for awt in self.anims_with_timings
-            ])
+            self.max_end_time = np.max(
+                [awt[2] for awt in self.anims_with_timings])
         else:
             self.max_end_time = 0
         if self.run_time is None:
@@ -91,14 +86,10 @@ class AnimationGroup(Animation):
         for anim in self.animations:
             start_time = curr_time
             end_time = start_time + anim.get_run_time()
-            self.anims_with_timings.append(
-                (anim, start_time, end_time)
-            )
+            self.anims_with_timings.append((anim, start_time, end_time))
             # Start time of next animation is based on
             # the lag_ratio
-            curr_time = interpolate(
-                start_time, end_time, self.lag_ratio
-            )
+            curr_time = interpolate(start_time, end_time, self.lag_ratio)
 
     def interpolate(self, alpha: float) -> None:
         # Note, if the run_time of AnimationGroup has been
@@ -112,10 +103,7 @@ class AnimationGroup(Animation):
             if anim_time == 0:
                 sub_alpha = 0
             else:
-                sub_alpha = clip(
-                    (time - start_time) / anim_time,
-                    0, 1
-                )
+                sub_alpha = clip((time - start_time) / anim_time, 0, 1)
             anim.interpolate(sub_alpha)
 
 
@@ -125,7 +113,7 @@ class Succession(AnimationGroup):
     }
 
     def begin(self) -> None:
-        assert(len(self.animations) > 0)
+        assert len(self.animations) > 0
         self.init_run_time()
         self.active_animation = self.animations[0]
         self.active_animation.begin()
@@ -137,9 +125,7 @@ class Succession(AnimationGroup):
         self.active_animation.update_mobjects(dt)
 
     def interpolate(self, alpha: float) -> None:
-        index, subalpha = integer_interpolate(
-            0, len(self.animations), alpha
-        )
+        index, subalpha = integer_interpolate(0, len(self.animations), alpha)
         animation = self.animations[index]
         if animation is not self.active_animation:
             self.active_animation.finish()
@@ -164,19 +150,18 @@ class LaggedStartMap(LaggedStart):
         AnimationClass: type,
         mobject: Mobject,
         arg_creator: Callable[[Mobject], tuple] | None = None,
-        **kwargs
+        **kwargs,
     ):
         args_list = []
         for submob in mobject:
             if arg_creator:
                 args_list.append(arg_creator(submob))
             else:
-                args_list.append((submob,))
+                args_list.append((submob, ))
         anim_kwargs = dict(kwargs)
         if "lag_ratio" in anim_kwargs:
             anim_kwargs.pop("lag_ratio")
         animations = [
-            AnimationClass(*args, **anim_kwargs)
-            for args in args_list
+            AnimationClass(*args, **anim_kwargs) for args in args_list
         ]
         super().__init__(*animations, group=mobject, **kwargs)

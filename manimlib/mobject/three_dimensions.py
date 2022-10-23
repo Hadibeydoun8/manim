@@ -4,21 +4,14 @@ import math
 
 import numpy as np
 
-from manimlib.constants import BLUE, BLUE_D, BLUE_E
-from manimlib.constants import IN, ORIGIN, OUT, RIGHT
-from manimlib.constants import PI, TAU
-from manimlib.mobject.types.surface import SGroup
-from manimlib.mobject.types.surface import Surface
-from manimlib.mobject.types.vectorized_mobject import VGroup
-from manimlib.mobject.types.vectorized_mobject import VMobject
-from manimlib.mobject.geometry import Polygon
-from manimlib.mobject.geometry import Square
+from manimlib.constants import BLUE, BLUE_D, BLUE_E, IN, ORIGIN, OUT, PI, RIGHT, TAU
+from manimlib.mobject.geometry import Polygon, Square
+from manimlib.mobject.types.surface import SGroup, Surface
+from manimlib.mobject.types.vectorized_mobject import VGroup, VMobject
 from manimlib.utils.bezier import interpolate
 from manimlib.utils.config_ops import digest_config
 from manimlib.utils.iterables import adjacent_pairs
-from manimlib.utils.space_ops import compass_directions
-from manimlib.utils.space_ops import get_norm
-from manimlib.utils.space_ops import z_to_vector
+from manimlib.utils.space_ops import compass_directions, get_norm, z_to_vector
 
 
 class SurfaceMesh(VGroup):
@@ -47,7 +40,8 @@ class SurfaceMesh(VGroup):
         u_indices = np.linspace(0, full_nu - 1, part_nu)
         v_indices = np.linspace(0, full_nv - 1, part_nv)
 
-        points, du_points, dv_points = uv_surface.get_surface_points_and_nudged_points()
+        points, du_points, dv_points = uv_surface.get_surface_points_and_nudged_points(
+        )
         normals = uv_surface.get_unit_normals()
         nudge = self.normal_nudge
         nudged_points = points + nudge * normals
@@ -56,23 +50,26 @@ class SurfaceMesh(VGroup):
             path = VMobject()
             low_ui = full_nv * int(math.floor(ui))
             high_ui = full_nv * int(math.ceil(ui))
-            path.set_points_smoothly(interpolate(
-                nudged_points[low_ui:low_ui + full_nv],
-                nudged_points[high_ui:high_ui + full_nv],
-                ui % 1
-            ))
+            path.set_points_smoothly(
+                interpolate(
+                    nudged_points[low_ui:low_ui + full_nv],
+                    nudged_points[high_ui:high_ui + full_nv],
+                    ui % 1,
+                ))
             self.add(path)
         for vi in v_indices:
             path = VMobject()
-            path.set_points_smoothly(interpolate(
-                nudged_points[int(math.floor(vi))::full_nv],
-                nudged_points[int(math.ceil(vi))::full_nv],
-                vi % 1
-            ))
+            path.set_points_smoothly(
+                interpolate(
+                    nudged_points[int(math.floor(vi))::full_nv],
+                    nudged_points[int(math.ceil(vi))::full_nv],
+                    vi % 1,
+                ))
             self.add(path)
 
 
 # 3D shapes
+
 
 class Sphere(Surface):
     CONFIG = {
@@ -83,11 +80,9 @@ class Sphere(Surface):
     }
 
     def uv_func(self, u: float, v: float) -> np.ndarray:
-        return self.radius * np.array([
-            np.cos(u) * np.sin(v),
-            np.sin(u) * np.sin(v),
-            -np.cos(v)
-        ])
+        return self.radius * np.array(
+            [np.cos(u) * np.sin(v),
+             np.sin(u) * np.sin(v), -np.cos(v)])
 
 
 class Torus(Surface):
@@ -125,19 +120,14 @@ class Cylinder(Surface):
 
 
 class Line3D(Cylinder):
-    CONFIG = {
-        "width": 0.05,
-        "resolution": (21, 25)
-    }
+    CONFIG = {"width": 0.05, "resolution": (21, 25)}
 
     def __init__(self, start: np.ndarray, end: np.ndarray, **kwargs):
         digest_config(self, kwargs)
         axis = end - start
-        super().__init__(
-            height=get_norm(axis),
-            radius=self.width / 2,
-            axis=axis
-        )
+        super().__init__(height=get_norm(axis),
+                         radius=self.width / 2,
+                         axis=axis)
         self.shift((start + end) / 2)
 
 
@@ -154,11 +144,7 @@ class Disk3D(Surface):
         self.scale(self.radius)
 
     def uv_func(self, u: float, v: float) -> np.ndarray:
-        return np.array([
-            u * np.cos(v),
-            u * np.sin(v),
-            0
-        ])
+        return np.array([u * np.cos(v), u * np.sin(v), 0])
 
 
 class Square3D(Surface):
@@ -211,7 +197,12 @@ class Cube(SGroup):
 
 
 class Prism(Cube):
-    def __init__(self, width: float = 3.0, height: float = 2.0, depth: float = 1.0, **kwargs):
+
+    def __init__(self,
+                 width: float = 3.0,
+                 height: float = 2.0,
+                 depth: float = 1.0,
+                 **kwargs):
         super().__init__(**kwargs)
         for dim, value in enumerate([width, height, depth]):
             self.rescale_to_fit(value, dim, stretch=True)
@@ -237,7 +228,12 @@ class VCube(VGroup):
 
 
 class VPrism(VCube):
-    def __init__(self, width: float = 3.0, height: float = 2.0, depth: float = 1.0, **kwargs):
+
+    def __init__(self,
+                 width: float = 3.0,
+                 height: float = 2.0,
+                 depth: float = 1.0,
+                 **kwargs):
         super().__init__(**kwargs)
         for dim, value in enumerate([width, height, depth]):
             self.rescale_to_fit(value, dim, stretch=True)

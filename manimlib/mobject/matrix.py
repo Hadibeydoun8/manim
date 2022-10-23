@@ -1,32 +1,32 @@
 from __future__ import annotations
 
 import itertools as it
+from typing import TYPE_CHECKING
 
 import numpy as np
 
-from manimlib.constants import DEFAULT_MOBJECT_TO_MOBJECT_BUFFER
-from manimlib.constants import DOWN, LEFT, RIGHT, UP
-from manimlib.constants import WHITE
-from manimlib.mobject.numbers import DecimalNumber
-from manimlib.mobject.numbers import Integer
+from manimlib.constants import (
+    DEFAULT_MOBJECT_TO_MOBJECT_BUFFER,
+    DOWN,
+    LEFT,
+    RIGHT,
+    UP,
+    WHITE,
+)
+from manimlib.mobject.numbers import DecimalNumber, Integer
 from manimlib.mobject.shape_matchers import BackgroundRectangle
-from manimlib.mobject.svg.tex_mobject import Tex
-from manimlib.mobject.svg.tex_mobject import TexText
-from manimlib.mobject.types.vectorized_mobject import VGroup
-from manimlib.mobject.types.vectorized_mobject import VMobject
-
-from typing import TYPE_CHECKING
+from manimlib.mobject.svg.tex_mobject import Tex, TexText
+from manimlib.mobject.types.vectorized_mobject import VGroup, VMobject
 
 if TYPE_CHECKING:
-    from colour import Color
     from typing import Union
 
     import numpy.typing as npt
+    from colour import Color
 
     from manimlib.mobject.mobject import Mobject
 
     ManimColor = Union[str, Color]
-
 
 VECTOR_LABEL_SCALE_FACTOR = 0.8
 
@@ -38,10 +38,7 @@ def matrix_to_tex_string(matrix: npt.ArrayLike) -> str:
     n_rows, n_cols = matrix.shape
     prefix = "\\left[ \\begin{array}{%s}" % ("c" * n_cols)
     suffix = "\\end{array} \\right]"
-    rows = [
-        " & ".join(row)
-        for row in matrix
-    ]
+    rows = [" & ".join(row) for row in matrix]
     return prefix + " \\\\ ".join(rows) + suffix
 
 
@@ -53,7 +50,7 @@ def vector_coordinate_label(
     vector_mob: VMobject,
     integer_labels: bool = True,
     n_dim: int = 2,
-    color: ManimColor = WHITE
+    color: ManimColor = WHITE,
 ) -> Matrix:
     vect = np.array(vector_mob.get_end())
     if integer_labels:
@@ -65,9 +62,11 @@ def vector_coordinate_label(
 
     shift_dir = np.array(vector_mob.get_end())
     if shift_dir[0] >= 0:  # Pointing right
-        shift_dir -= label.get_left() + DEFAULT_MOBJECT_TO_MOBJECT_BUFFER * LEFT
+        shift_dir -= label.get_left(
+        ) + DEFAULT_MOBJECT_TO_MOBJECT_BUFFER * LEFT
     else:  # Pointing left
-        shift_dir -= label.get_right() + DEFAULT_MOBJECT_TO_MOBJECT_BUFFER * RIGHT
+        shift_dir -= label.get_right(
+        ) + DEFAULT_MOBJECT_TO_MOBJECT_BUFFER * RIGHT
     label.shift(shift_dir)
     label.set_color(color)
     label.rect = BackgroundRectangle(label)
@@ -109,14 +108,12 @@ class Matrix(VMobject):
         if self.include_background_rectangle:
             self.add_background_rectangle()
 
-    def matrix_to_mob_matrix(self, matrix: npt.ArrayLike) -> list[list[Mobject]]:
-        return [
-            [
-                self.element_to_mobject(item, **self.element_to_mobject_config)
-                for item in row
-            ]
-            for row in matrix
-        ]
+    def matrix_to_mob_matrix(self,
+                             matrix: npt.ArrayLike) -> list[list[Mobject]]:
+        return [[
+            self.element_to_mobject(item, **self.element_to_mobject_config)
+            for item in row
+        ] for row in matrix]
 
     def organize_mob_matrix(self, matrix: npt.ArrayLike):
         for i, row in enumerate(matrix):
@@ -124,7 +121,7 @@ class Matrix(VMobject):
                 mob = matrix[i][j]
                 mob.move_to(
                     i * self.v_buff * DOWN + j * self.h_buff * RIGHT,
-                    self.element_alignment_corner
+                    self.element_alignment_corner,
                 )
         return self
 
@@ -137,9 +134,7 @@ class Matrix(VMobject):
             "\\end{array}",
             "\\right]",
         ]))[0]
-        bracket_pair.set_height(
-            self.get_height() + 1 * self.bracket_v_buff
-        )
+        bracket_pair.set_height(self.get_height() + 1 * self.bracket_v_buff)
         l_bracket = bracket_pair[:len(bracket_pair) // 2]
         r_bracket = bracket_pair[len(bracket_pair) // 2:]
         l_bracket.next_to(self, LEFT, self.bracket_h_buff)
@@ -155,10 +150,7 @@ class Matrix(VMobject):
         ])
 
     def get_rows(self) -> VGroup:
-        return VGroup(*[
-            VGroup(*row)
-            for row in self.mob_matrix
-        ])
+        return VGroup(*[VGroup(*row) for row in self.mob_matrix])
 
     def set_column_colors(self, *colors: ManimColor):
         columns = self.get_columns()
@@ -184,7 +176,9 @@ class Matrix(VMobject):
 class DecimalMatrix(Matrix):
     CONFIG = {
         "element_to_mobject": DecimalNumber,
-        "element_to_mobject_config": {"num_decimal_places": 1}
+        "element_to_mobject_config": {
+            "num_decimal_places": 1
+        },
     }
 
 
@@ -205,7 +199,7 @@ def get_det_text(
     matrix: Matrix,
     determinant: int | str | None = None,
     background_rect: bool = False,
-    initial_scale_factor: int = 2
+    initial_scale_factor: int = 2,
 ) -> VGroup:
     parens = Tex("(", ")")
     parens.scale(initial_scale_factor)

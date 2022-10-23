@@ -1,5 +1,6 @@
-from manimlib import *
 import numpy as np
+
+from manimlib import *
 
 # To watch one of these scenes, run the following:
 # manimgl example_scenes.py OpeningManimExample
@@ -10,6 +11,7 @@ import numpy as np
 
 
 class OpeningManimExample(Scene):
+
     def construct(self):
         intro_words = Text("""
             The original motivation for manim was to
@@ -27,16 +29,14 @@ class OpeningManimExample(Scene):
         linear_transform_words = VGroup(
             Text("This is what the matrix"),
             IntegerMatrix(matrix, include_background_rectangle=True),
-            Text("looks like")
+            Text("looks like"),
         )
         linear_transform_words.arrange(RIGHT)
         linear_transform_words.to_edge(UP)
         linear_transform_words.set_stroke(BLACK, 10, background=True)
 
-        self.play(
-            ShowCreation(grid),
-            FadeTransform(intro_words, linear_transform_words)
-        )
+        self.play(ShowCreation(grid),
+                  FadeTransform(intro_words, linear_transform_words))
         self.wait()
         self.play(grid.animate.apply_matrix(matrix), run_time=3)
         self.wait()
@@ -69,6 +69,7 @@ class OpeningManimExample(Scene):
 
 
 class AnimatingMethods(Scene):
+
     def construct(self):
         grid = Tex(r"\pi").get_grid(10, 10, height=4)
         self.add(grid)
@@ -100,19 +101,18 @@ class AnimatingMethods(Scene):
         # Even more generally, you could apply Mobject.apply_function,
         # which takes in functions form R^3 to R^3
         self.play(
-            grid.animate.apply_function(
-                lambda p: [
-                    p[0] + 0.5 * math.sin(p[1]),
-                    p[1] + 0.5 * math.sin(p[0]),
-                    p[2]
-                ]
-            ),
+            grid.animate.apply_function(lambda p: [
+                p[0] + 0.5 * math.sin(p[1]),
+                p[1] + 0.5 * math.sin(p[0]),
+                p[2],
+            ]),
             run_time=5,
         )
         self.wait()
 
 
 class TextExample(Scene):
+
     def construct(self):
         # To run this scene properly, you should have "Consolas" font in your computer
         # for full usage, you can see https://github.com/3b1b/manim/pull/680
@@ -122,9 +122,14 @@ class TextExample(Scene):
             The most important difference between Text and TexText is that\n
             you can change the font more easily, but can't use the LaTeX grammar
             """,
-            font="Arial", font_size=24,
+            font="Arial",
+            font_size=24,
             # t2c is a dict that you can choose color for different text
-            t2c={"Text": BLUE, "TexText": BLUE, "LaTeX": ORANGE}
+            t2c={
+                "Text": BLUE,
+                "TexText": BLUE,
+                "LaTeX": ORANGE
+            },
         )
         VGroup(text, difference).arrange(DOWN, buff=1)
         self.play(Write(text))
@@ -134,8 +139,14 @@ class TextExample(Scene):
         fonts = Text(
             "And you can also set the font according to different words",
             font="Arial",
-            t2f={"font": "Consolas", "words": "Consolas"},
-            t2c={"font": BLUE, "words": GREEN}
+            t2f={
+                "font": "Consolas",
+                "words": "Consolas"
+            },
+            t2c={
+                "font": BLUE,
+                "words": GREEN
+            },
         )
         fonts.set_width(FRAME_WIDTH - 1)
         slant = Text(
@@ -143,7 +154,10 @@ class TextExample(Scene):
             font="Consolas",
             t2s={"slant": ITALIC},
             t2w={"weight": BOLD},
-            t2c={"slant": ORANGE, "weight": RED}
+            t2c={
+                "slant": ORANGE,
+                "weight": RED
+            },
         )
         VGroup(fonts, slant).arrange(DOWN, buff=0.8)
         self.play(FadeOut(text), FadeOut(difference, shift=DOWN))
@@ -154,6 +168,7 @@ class TextExample(Scene):
 
 
 class TexTransformExample(Scene):
+
     def construct(self):
         to_isolate = ["B", "C", "=", "(", ")"]
         lines = VGroup(
@@ -174,7 +189,7 @@ class TexTransformExample(Scene):
             # to the commented out line below it.
             Tex("A^2 = (C + B)(C - B)", isolate=["A^2", *to_isolate]),
             # Tex("A^2", "=", "(", "C", "+", "B", ")", "(", "C", "-", "B", ")"),
-            Tex("A = \\sqrt{(C + B)(C - B)}", isolate=["A", *to_isolate])
+            Tex("A = \\sqrt{(C + B)(C - B)}", isolate=["A", *to_isolate]),
         )
         lines.arrange(DOWN, buff=LARGE_BUFF)
         for line in lines:
@@ -193,18 +208,14 @@ class TexTransformExample(Scene):
         # for the idea of rearranging an equation
         self.play(
             TransformMatchingTex(
-                lines[0].copy(), lines[1],
+                lines[0].copy(),
+                lines[1],
                 path_arc=90 * DEGREES,
-            ),
-            **play_kw
-        )
+            ), **play_kw)
         self.wait()
 
         # Now, we could try this again on the next line...
-        self.play(
-            TransformMatchingTex(lines[1].copy(), lines[2]),
-            **play_kw
-        )
+        self.play(TransformMatchingTex(lines[1].copy(), lines[2]), **play_kw)
         self.wait()
         # ...and this looks nice enough, but since there's no tex
         # in lines[2] which matches "C^2" or "B^2", those terms fade
@@ -214,14 +225,13 @@ class TexTransformExample(Scene):
         self.play(FadeOut(lines[2]))
         self.play(
             TransformMatchingTex(
-                lines[1].copy(), lines[2],
+                lines[1].copy(),
+                lines[2],
                 key_map={
                     "C^2": "C",
                     "B^2": "B",
-                }
-            ),
-            **play_kw
-        )
+                },
+            ), **play_kw)
         self.wait()
 
         # And to finish off, a simple TransformMatchingShapes would work
@@ -239,11 +249,10 @@ class TexTransformExample(Scene):
 
         self.play(
             TransformMatchingTex(
-                new_line2, lines[3],
+                new_line2,
+                lines[3],
                 transform_mismatches=True,
-            ),
-            **play_kw
-        )
+            ), **play_kw)
         self.wait(3)
         self.play(FadeOut(lines, RIGHT))
 
@@ -266,6 +275,7 @@ class TexTransformExample(Scene):
 
 
 class UpdatersExample(Scene):
+
     def construct(self):
         square = Square()
         square.set_fill(BLUE_E, 1)
@@ -282,7 +292,7 @@ class UpdatersExample(Scene):
                 show_ellipsis=True,
                 num_decimal_places=2,
                 include_sign=True,
-            )
+            ),
         )
         label.arrange(RIGHT)
 
@@ -315,10 +325,7 @@ class UpdatersExample(Scene):
             run_time=3,
         )
         self.wait()
-        self.play(
-            square.animate.set_width(2),
-            run_time=3
-        )
+        self.play(square.animate.set_width(2), run_time=3)
         self.wait()
 
         # In general, you can alway call Mobject.add_updater, and pass in
@@ -328,12 +335,12 @@ class UpdatersExample(Scene):
         now = self.time
         w0 = square.get_width()
         square.add_updater(
-            lambda m: m.set_width(w0 * math.sin(self.time - now) + w0)
-        )
+            lambda m: m.set_width(w0 * math.sin(self.time - now) + w0))
         self.wait(4 * PI)
 
 
 class CoordinateSystemExample(Scene):
+
     def construct(self):
         axes = Axes(
             # x-axis ranges from -1 to 10, with a default step size of 1
@@ -354,7 +361,7 @@ class CoordinateSystemExample(Scene):
             # of them, like this.
             y_axis_config={
                 "include_tip": False,
-            }
+            },
         )
         # Keyword arguments of add_coordinate_labels can be used to
         # configure the DecimalNumber mobjects which it creates and
@@ -412,6 +419,7 @@ class CoordinateSystemExample(Scene):
 
 
 class GraphExample(Scene):
+
     def construct(self):
         axes = Axes((-3, 10), (-1, 8))
         axes.add_coordinate_labels()
@@ -465,11 +473,8 @@ class GraphExample(Scene):
 
         parabola = axes.get_graph(lambda x: 0.25 * x**2)
         parabola.set_stroke(BLUE)
-        self.play(
-            FadeOut(step_graph),
-            FadeOut(step_label),
-            ShowCreation(parabola)
-        )
+        self.play(FadeOut(step_graph), FadeOut(step_label),
+                  ShowCreation(parabola))
         self.wait()
 
         # You can use axes.input_to_graph_point, abbreviated
@@ -482,10 +487,8 @@ class GraphExample(Scene):
         # with the intent of having other mobjects update based
         # on the parameter
         x_tracker = ValueTracker(2)
-        f_always(
-            dot.move_to,
-            lambda: axes.i2gp(x_tracker.get_value(), parabola)
-        )
+        f_always(dot.move_to,
+                 lambda: axes.i2gp(x_tracker.get_value(), parabola))
 
         self.play(x_tracker.animate.set_value(4), run_time=3)
         self.play(x_tracker.animate.set_value(-2), run_time=3)
@@ -548,17 +551,14 @@ class SurfaceExample(Scene):
         for mob in surfaces[1:]:
             mob.rotate(PI / 2)
 
-        self.play(
-            Transform(surface, surfaces[1]),
-            run_time=3
-        )
+        self.play(Transform(surface, surfaces[1]), run_time=3)
 
         self.play(
             Transform(surface, surfaces[2]),
             # Move camera frame during the transition
             frame.animate.increment_phi(-10 * DEGREES),
             frame.animate.increment_theta(-20 * DEGREES),
-            run_time=3
+            run_time=3,
         )
         # Add ambient rotation
         frame.add_updater(lambda m, dt: m.increment_theta(-0.1 * dt))
@@ -584,6 +584,7 @@ class SurfaceExample(Scene):
 
 
 class InteractiveDevelopment(Scene):
+
     def construct(self):
         circle = Circle()
         circle.set_fill(BLUE, opacity=0.5)
@@ -630,14 +631,20 @@ class InteractiveDevelopment(Scene):
 
 
 class ControlsExample(Scene):
+
     def setup(self):
         self.textbox = Textbox()
         self.checkbox = Checkbox()
         self.color_picker = ColorSliders()
         self.panel = ControlPanel(
-            Text("Text", font_size=24), self.textbox, Line(),
-            Text("Show/Hide Text", font_size=24), self.checkbox, Line(),
-            Text("Color of Text", font_size=24), self.color_picker
+            Text("Text", font_size=24),
+            self.textbox,
+            Line(),
+            Text("Show/Hide Text", font_size=24),
+            self.checkbox,
+            Line(),
+            Text("Color of Text", font_size=24),
+            self.color_picker,
         )
         self.add(self.panel)
 
@@ -645,14 +652,15 @@ class ControlsExample(Scene):
         text = Text("text", font_size=96)
 
         def text_updater(old_text):
-            assert(isinstance(old_text, Text))
-            new_text = Text(self.textbox.get_value(), font_size=old_text.font_size)
+            assert isinstance(old_text, Text)
+            new_text = Text(self.textbox.get_value(),
+                            font_size=old_text.font_size)
             # new_text.align_data_and_family(old_text)
             new_text.move_to(old_text)
             if self.checkbox.get_value():
                 new_text.set_fill(
                     color=self.color_picker.get_picked_color(),
-                    opacity=self.color_picker.get_picked_opacity()
+                    opacity=self.color_picker.get_picked_opacity(),
                 )
             else:
                 new_text.set_opacity(0)

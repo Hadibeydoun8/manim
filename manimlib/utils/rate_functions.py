@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import numpy as np
 
 from manimlib.utils.bezier import bezier
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing import Callable
@@ -45,8 +45,8 @@ def there_and_back(t: float) -> float:
     return smooth(new_t)
 
 
-def there_and_back_with_pause(t: float, pause_ratio: float = 1. / 3) -> float:
-    a = 1. / pause_ratio
+def there_and_back_with_pause(t: float, pause_ratio: float = 1.0 / 3) -> float:
+    a = 1.0 / pause_ratio
     if t < 0.5 - pause_ratio / 2:
         return smooth(a * t)
     elif t < 0.5 + pause_ratio / 2:
@@ -59,12 +59,12 @@ def running_start(t: float, pull_factor: float = -0.5) -> float:
     return bezier([0, 0, pull_factor, pull_factor, 1, 1, 1])(t)
 
 
-def not_quite_there(
-    func: Callable[[float], float] = smooth,
-    proportion: float = 0.7
-) -> Callable[[float], float]:
+def not_quite_there(func: Callable[[float], float] = smooth,
+                    proportion: float = 0.7) -> Callable[[float], float]:
+
     def result(t):
         return proportion * func(t)
+
     return result
 
 
@@ -72,11 +72,10 @@ def wiggle(t: float, wiggles: float = 2) -> float:
     return there_and_back(t) * np.sin(wiggles * np.pi * t)
 
 
-def squish_rate_func(
-    func: Callable[[float], float],
-    a: float = 0.4,
-    b: float = 0.6
-) -> Callable[[float], float]:
+def squish_rate_func(func: Callable[[float], float],
+                     a: float = 0.4,
+                     b: float = 0.6) -> Callable[[float], float]:
+
     def result(t):
         if a == b:
             return a
@@ -88,6 +87,7 @@ def squish_rate_func(
             return func((t - a) / (b - a))
 
     return result
+
 
 # Stylistically, should this take parameters (with default values)?
 # Ultimately, the functionality is entirely subsumed by squish_rate_func,

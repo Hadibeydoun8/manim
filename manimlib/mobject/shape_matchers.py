@@ -1,18 +1,26 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from colour import Color
 
-from manimlib.constants import BLACK, RED, YELLOW
-from manimlib.constants import DL, DOWN, DR, LEFT, RIGHT, UL, UR
-from manimlib.constants import SMALL_BUFF
-from manimlib.mobject.geometry import Line
-from manimlib.mobject.geometry import Rectangle
-from manimlib.mobject.types.vectorized_mobject import VGroup
-from manimlib.mobject.types.vectorized_mobject import VMobject
+from manimlib.constants import (
+    BLACK,
+    DL,
+    DOWN,
+    DR,
+    LEFT,
+    RED,
+    RIGHT,
+    SMALL_BUFF,
+    UL,
+    UR,
+    YELLOW,
+)
+from manimlib.mobject.geometry import Line, Rectangle
+from manimlib.mobject.types.vectorized_mobject import VGroup, VMobject
 from manimlib.utils.config_ops import digest_config
 from manimlib.utils.customization import get_customization
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing import Union
@@ -46,7 +54,7 @@ class BackgroundRectangle(SurroundingRectangle):
 
     def __init__(self, mobject: Mobject, color: ManimColor = None, **kwargs):
         if color is None:
-            color = get_customization()['style']['background_color']
+            color = get_customization()["style"]["background_color"]
         SurroundingRectangle.__init__(self, mobject, color=color, **kwargs)
         self.original_fill_opacity = self.fill_opacity
 
@@ -60,7 +68,7 @@ class BackgroundRectangle(SurroundingRectangle):
         stroke_width: float | None = None,
         fill_color: ManimColor | None = None,
         fill_opacity: float | None = None,
-        family: bool = True
+        family: bool = True,
     ):
         # Unchangeable style, except for fill_opacity
         VMobject.set_style_data(
@@ -68,7 +76,7 @@ class BackgroundRectangle(SurroundingRectangle):
             stroke_color=BLACK,
             stroke_width=0,
             fill_color=BLACK,
-            fill_opacity=fill_opacity
+            fill_opacity=fill_opacity,
         )
         return self
 
