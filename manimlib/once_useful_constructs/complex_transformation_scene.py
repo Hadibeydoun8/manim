@@ -121,7 +121,9 @@ class ComplexTransformationScene(Scene):
         transformer.add(*self.transformable_mobjects)
         return transformer, transform_kwargs
 
-    def apply_complex_function(self, func, added_anims=[], **kwargs):
+    def apply_complex_function(self, func, added_anims=None, **kwargs):
+        if added_anims is None:
+            added_anims = []
         transformer, transform_kwargs = self.get_transformer(**kwargs)
         transformer.generate_target()
         # Rescale, apply function, scale back
@@ -142,7 +144,9 @@ class ComplexTransformationScene(Scene):
             *added_anims
         )
 
-    def apply_complex_homotopy(self, complex_homotopy, added_anims=[], **kwargs):
+    def apply_complex_homotopy(self, complex_homotopy, added_anims=None, **kwargs):
+        if added_anims is None:
+            added_anims = []
         transformer, transform_kwargs = self.get_transformer(**kwargs)
 
         # def homotopy(x, y, z, t):

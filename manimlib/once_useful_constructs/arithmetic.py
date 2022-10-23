@@ -16,8 +16,10 @@ class RearrangeEquation(Scene):
         start_transform=None,
         end_transform=None,
         leave_start_terms=False,
-        transform_kwargs={},
+        transform_kwargs=None,
     ):
+        if transform_kwargs is None:
+            transform_kwargs = {}
         transform_kwargs["path_func"] = path
         start_mobs, end_mobs = self.get_mobs_from_terms(
             start_terms, end_terms

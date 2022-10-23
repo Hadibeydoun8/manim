@@ -87,17 +87,21 @@ class SampleSpace(Rectangle):
     def get_horizontal_division(
         self,
         p_list: list[float],
-        colors: Iterable[ManimColor] = [GREEN_E, BLUE_E],
+        colors: Iterable[ManimColor] = None,
         vect: np.ndarray = DOWN
     ) -> VGroup:
+        if colors is None:
+            colors = [GREEN_E, BLUE_E]
         return self.get_division_along_dimension(p_list, 1, colors, vect)
 
     def get_vertical_division(
         self,
         p_list: list[float],
-        colors: Iterable[ManimColor] = [MAROON_B, YELLOW],
+        colors: Iterable[ManimColor] = None,
         vect: np.ndarray = RIGHT
     ) -> VGroup:
+        if colors is None:
+            colors = [MAROON_B, YELLOW]
         return self.get_division_along_dimension(p_list, 0, colors, vect)
 
     def divide_horizontally(self, *args, **kwargs) -> None:

@@ -496,7 +496,9 @@ class LinearTransformationScene(VectorScene):
         self.plane.prepare_for_nonlinear_transform()
         self.apply_function(function, **kwargs)
 
-    def apply_function(self, function, added_anims=[], **kwargs):
+    def apply_function(self, function, added_anims=None, **kwargs):
+        if added_anims is None:
+            added_anims = []
         if "run_time" not in kwargs:
             kwargs["run_time"] = 3
         anims = [

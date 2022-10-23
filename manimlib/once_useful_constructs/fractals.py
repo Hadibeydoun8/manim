@@ -33,7 +33,9 @@ def fractalify(vmobject, order=3, *args, **kwargs):
     return vmobject
 
 
-def fractalification_iteration(vmobject, dimension=1.05, num_inserted_anchors_range=list(range(1, 4))):
+def fractalification_iteration(vmobject, dimension=1.05, num_inserted_anchors_range=None):
+    if num_inserted_anchors_range is None:
+        num_inserted_anchors_range = list(range(1, 4))
     num_points = vmobject.get_num_points()
     if num_points > 0:
         # original_anchors = vmobject.get_anchors()
