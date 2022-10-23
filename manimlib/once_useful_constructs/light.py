@@ -287,7 +287,7 @@ class Spotlight(VMobject):
         if self.screen is None:
             return
         for submob in self.submobjects:
-            if type(submob) == AnnularSector:
+            if type(submob) is AnnularSector:
                 lower_angle, upper_angle = self.viewing_angles(self.screen)
                 # dr = submob.outer_radius - submob.inner_radius
                 dr = self.radius / self.num_levels
@@ -317,7 +317,7 @@ class Spotlight(VMobject):
 
         sectors = []
         for submob in self.submobjects:
-            if type(submob) == AnnularSector:
+            if type(submob) is AnnularSector:
                 sectors.append(submob)
 
         for (r, submob) in zip(np.arange(0, self.radius, dr), sectors):
