@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 # to that shader
 
 
-class ShaderWrapper(object):
+class ShaderWrapper:
     def __init__(
         self,
         vert_data: np.ndarray | None = None,

@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from manimlib.mobject.mobject import Mobject
 
 
-class EventListner(object):
+class EventListner:
     def __init__(
         self,
         mobject: Mobject,

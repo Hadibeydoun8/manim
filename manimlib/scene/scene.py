@@ -49,7 +49,7 @@ RESET_FRAME_KEY = 'r'
 QUIT_KEY = 'q'
 
 
-class Scene(object):
+class Scene:
     CONFIG = {
         "window_config": {},
         "camera_class": Camera,

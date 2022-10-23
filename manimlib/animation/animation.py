@@ -21,7 +21,7 @@ DEFAULT_ANIMATION_RUN_TIME = 1.0
 DEFAULT_ANIMATION_LAG_RATIO = 0
 
 
-class Animation(object):
+class Animation:
     CONFIG = {
         "run_time": DEFAULT_ANIMATION_RUN_TIME,
         "time_span": None,  # Tuple of times, between which the animation will run

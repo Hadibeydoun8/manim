@@ -6,7 +6,7 @@ from manimlib.event_handler.event_listner import EventListner
 from manimlib.event_handler.event_type import EventType
 
 
-class EventDispatcher(object):
+class EventDispatcher:
     def __init__(self):
         self.event_listners: dict[
             EventType, list[EventListner]

@@ -164,7 +164,7 @@ class CameraFrame(Mobject):
         return self.get_center() + dist * to_camera
 
 
-class Camera(object):
+class Camera:
     CONFIG = {
         "background_image": None,
         "frame_config": {},

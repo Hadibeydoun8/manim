@@ -28,7 +28,7 @@ if TYPE_CHECKING:
     from manimlib.scene.scene import Scene
 
 
-class SceneFileWriter(object):
+class SceneFileWriter:
     CONFIG = {
         "write_to_movie": False,
         "break_into_partial_movies": False,

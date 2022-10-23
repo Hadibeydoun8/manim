@@ -58,7 +58,7 @@ if TYPE_CHECKING:
     ManimColor = Union[str, Color]
 
 
-class Mobject(object):
+class Mobject:
     """
     Mathematical Object
     """
