@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import os
+from typing import TYPE_CHECKING
 
 import numpy as np
 import validators
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing import Iterable
@@ -13,7 +12,7 @@ if TYPE_CHECKING:
 
 def add_extension_if_not_present(file_name: str, extension: str) -> str:
     # This could conceivably be smarter about handling existing differing extensions
-    if(file_name[-len(extension):] != extension):
+    if file_name[-len(extension):] != extension:
         return file_name + extension
     else:
         return file_name
@@ -28,13 +27,15 @@ def guarantee_existence(path: str) -> str:
 def find_file(
     file_name: str,
     directories: Iterable[str] | None = None,
-    extensions: Iterable[str] | None = None
+    extensions: Iterable[str] | None = None,
 ) -> str:
     # Check if this is a file online first, and if so, download
     # it to a temporary directory
     if validators.url(file_name):
         import urllib.request
+
         from manimlib.utils.directories import get_downloads_dir
+
         stem, name = os.path.split(file_name)
         folder = get_downloads_dir()
         path = os.path.join(folder, name)
@@ -48,11 +49,8 @@ def find_file(
     # Otherwise look in local file system
     directories = directories or [""]
     extensions = extensions or [""]
-    possible_paths = (
-        os.path.join(directory, file_name + extension)
-        for directory in directories
-        for extension in extensions
-    )
+    possible_paths = (os.path.join(directory, file_name + extension)
+                      for directory in directories for extension in extensions)
     for path in possible_paths:
         if os.path.exists(path):
             return path
@@ -69,8 +67,8 @@ def get_sorted_integer_files(
 ) -> list[str]:
     indexed_files = []
     for file in os.listdir(directory):
-        if '.' in file:
-            index_str = file[:file.index('.')]
+        if "." in file:
+            index_str = file[:file.index(".")]
         else:
             index_str = file
 

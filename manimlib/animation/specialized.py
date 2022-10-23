@@ -1,13 +1,13 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from manimlib.animation.composition import LaggedStart
 from manimlib.animation.transform import Restore
 from manimlib.constants import BLACK, WHITE
 from manimlib.mobject.geometry import Circle
 from manimlib.mobject.types.vectorized_mobject import VGroup
 from manimlib.utils.config_ops import digest_config
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     import numpy as np
@@ -34,15 +34,10 @@ class Broadcast(LaggedStart):
                 stroke_color=BLACK,
                 stroke_width=0,
             )
-            circle.add_updater(
-                lambda c: c.move_to(focal_point)
-            )
+            circle.add_updater(lambda c: c.move_to(focal_point))
             circle.save_state()
             circle.set_width(self.small_radius * 2)
             circle.set_stroke(self.color, self.start_stroke_width)
             circles.add(circle)
-        animations = [
-            Restore(circle)
-            for circle in circles
-        ]
+        animations = [Restore(circle) for circle in circles]
         super().__init__(*animations, **kwargs)

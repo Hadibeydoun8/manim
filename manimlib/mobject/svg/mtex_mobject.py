@@ -1,33 +1,29 @@
 from __future__ import annotations
 
 import re
-
-from manimlib.mobject.svg.string_mobject import StringMobject
-from manimlib.utils.tex_file_writing import display_during_execution
-from manimlib.utils.tex_file_writing import tex_content_to_svg_file
-
 from typing import TYPE_CHECKING
 
+from manimlib.mobject.svg.string_mobject import StringMobject
+from manimlib.utils.tex_file_writing import (
+    display_during_execution,
+    tex_content_to_svg_file,
+)
+
 if TYPE_CHECKING:
-    from colour import Color
     import re
     from typing import Iterable, Union
+
+    from colour import Color
 
     from manimlib.mobject.types.vectorized_mobject import VGroup
 
     ManimColor = Union[str, Color]
     Span = tuple[int, int]
-    Selector = Union[
-        str,
-        re.Pattern,
-        tuple[Union[int, None], Union[int, None]],
-        Iterable[Union[
-            str,
-            re.Pattern,
-            tuple[Union[int, None], Union[int, None]]
-        ]]
-    ]
-
+    Selector = Union[str, re.Pattern, tuple[Union[int, None], Union[int,
+                                                                    None]],
+                     Iterable[Union[str, re.Pattern, tuple[Union[int, None],
+                                                           Union[int,
+                                                                 None]]]], ]
 
 SCALE_FACTOR_PER_FONT_POINT = 0.001
 
@@ -66,14 +62,13 @@ class MTex(StringMobject):
             self.tex_environment,
             self.tex_to_color_map,
             self.template,
-            self.additional_preamble
+            self.additional_preamble,
         )
 
     def get_file_path_by_content(self, content: str) -> str:
-        with display_during_execution(f"Writing \"{self.tex_string}\""):
-            file_path = tex_content_to_svg_file(
-                content, self.template, self.additional_preamble
-            )
+        with display_during_execution(f'Writing "{self.tex_string}"'):
+            file_path = tex_content_to_svg_file(content, self.template,
+                                                self.additional_preamble)
         return file_path
 
     # Parsing
@@ -81,11 +76,14 @@ class MTex(StringMobject):
     @staticmethod
     def get_command_matches(string: str) -> list[re.Match]:
         # Lump together adjacent brace pairs
-        pattern = re.compile(r"""
+        pattern = re.compile(
+            r"""
             (?P<command>\\(?:[a-zA-Z]+|.))
             |(?P<open>{+)
             |(?P<close>}+)
-        """, flags=re.X | re.S)
+        """,
+            flags=re.X | re.S,
+        )
         result = []
         open_stack = []
         for match_obj in pattern.finditer(string):
@@ -98,12 +96,16 @@ class MTex(StringMobject):
                         raise ValueError("Missing '{' inserted")
                     (open_start, open_end), index = open_stack.pop()
                     n = min(open_end - open_start, close_end - close_start)
-                    result.insert(index, pattern.fullmatch(
-                        string, pos=open_end - n, endpos=open_end
-                    ))
-                    result.append(pattern.fullmatch(
-                        string, pos=close_start, endpos=close_start + n
-                    ))
+                    result.insert(
+                        index,
+                        pattern.fullmatch(string,
+                                          pos=open_end - n,
+                                          endpos=open_end),
+                    )
+                    result.append(
+                        pattern.fullmatch(string,
+                                          pos=close_start,
+                                          endpos=close_start + n))
                     close_start += n
                     if close_start < close_end:
                         continue
@@ -137,18 +139,15 @@ class MTex(StringMobject):
 
     @staticmethod
     def get_attr_dict_from_command_pair(
-        open_command: re.Match, close_command: re.Match
-    ) -> dict[str, str] | None:
+            open_command: re.Match,
+            close_command: re.Match) -> dict[str, str] | None:
         if len(open_command.group()) >= 2:
             return {}
         return None
 
     def get_configured_items(self) -> list[tuple[Span, dict[str, str]]]:
-        return [
-            (span, {})
-            for selector in self.tex_to_color_map
-            for span in self.find_spans_by_selector(selector)
-        ]
+        return [(span, {}) for selector in self.tex_to_color_map
+                for span in self.find_spans_by_selector(selector)]
 
     @staticmethod
     def get_color_command(rgb_hex: str) -> str:
@@ -158,24 +157,21 @@ class MTex(StringMobject):
         return f"\\color[RGB]{{{r}, {g}, {b}}}"
 
     @staticmethod
-    def get_command_string(
-        attr_dict: dict[str, str], is_end: bool, label_hex: str | None
-    ) -> str:
+    def get_command_string(attr_dict: dict[str, str], is_end: bool,
+                           label_hex: str | None) -> str:
         if label_hex is None:
             return ""
         if is_end:
             return "}}"
         return "{{" + MTex.get_color_command(label_hex)
 
-    def get_content_prefix_and_suffix(
-        self, is_labelled: bool
-    ) -> tuple[str, str]:
+    def get_content_prefix_and_suffix(self,
+                                      is_labelled: bool) -> tuple[str, str]:
         prefix_lines = []
         suffix_lines = []
         if not is_labelled:
-            prefix_lines.append(self.get_color_command(
-                self.color_to_hex(self.base_color)
-            ))
+            prefix_lines.append(
+                self.get_color_command(self.color_to_hex(self.base_color)))
         if self.alignment:
             prefix_lines.append(self.alignment)
         if self.tex_environment:
@@ -183,7 +179,7 @@ class MTex(StringMobject):
             suffix_lines.append(f"\\end{{{self.tex_environment}}}")
         return (
             "".join([line + "\n" for line in prefix_lines]),
-            "".join(["\n" + line for line in suffix_lines])
+            "".join(["\n" + line for line in suffix_lines]),
         )
 
     # Method alias
@@ -197,9 +193,8 @@ class MTex(StringMobject):
     def set_color_by_tex(self, selector: Selector, color: ManimColor):
         return self.set_parts_color(selector, color)
 
-    def set_color_by_tex_to_color_map(
-        self, color_map: dict[Selector, ManimColor]
-    ):
+    def set_color_by_tex_to_color_map(self, color_map: dict[Selector,
+                                                            ManimColor]):
         return self.set_parts_color_by_dict(color_map)
 
     def get_tex(self) -> str:

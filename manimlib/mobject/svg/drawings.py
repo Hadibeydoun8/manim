@@ -2,41 +2,31 @@ from manimlib.animation.animation import Animation
 from manimlib.animation.rotation import Rotating
 from manimlib.constants import *
 from manimlib.mobject.boolean_ops import Difference
-from manimlib.mobject.geometry import Arc
-from manimlib.mobject.geometry import Circle
-from manimlib.mobject.geometry import Line
-from manimlib.mobject.geometry import Polygon
-from manimlib.mobject.geometry import Rectangle
-from manimlib.mobject.geometry import Square
+from manimlib.mobject.geometry import Arc, Circle, Line, Polygon, Rectangle, Square
 from manimlib.mobject.mobject import Mobject
 from manimlib.mobject.svg.svg_mobject import SVGMobject
-from manimlib.mobject.svg.tex_mobject import Tex
-from manimlib.mobject.svg.tex_mobject import TexText
-from manimlib.mobject.three_dimensions import Cube
-from manimlib.mobject.three_dimensions import Prismify
-from manimlib.mobject.types.vectorized_mobject import VGroup
-from manimlib.mobject.types.vectorized_mobject import VMobject
+from manimlib.mobject.svg.tex_mobject import Tex, TexText
+from manimlib.mobject.three_dimensions import Cube, Prismify
+from manimlib.mobject.types.vectorized_mobject import VGroup, VMobject
 from manimlib.utils.config_ops import digest_config
 from manimlib.utils.rate_functions import linear
-from manimlib.utils.space_ops import angle_of_vector
-from manimlib.utils.space_ops import complex_to_R3
-from manimlib.utils.space_ops import midpoint
-from manimlib.utils.space_ops import rotate_vector
+from manimlib.utils.space_ops import (
+    angle_of_vector,
+    complex_to_R3,
+    midpoint,
+    rotate_vector,
+)
 
 
 class Checkmark(TexText):
-    CONFIG = {
-        "color": GREEN
-    }
+    CONFIG = {"color": GREEN}
 
     def __init__(self, **kwargs):
         super().__init__("\\ding{51}")
 
 
 class Exmark(TexText):
-    CONFIG = {
-        "color": RED
-    }
+    CONFIG = {"color": RED}
 
     def __init__(self, **kwargs):
         super().__init__("\\ding{55}")
@@ -69,10 +59,7 @@ class Speedometer(VMobject):
     def init_points(self):
         start_angle = np.pi / 2 + self.arc_angle / 2
         end_angle = np.pi / 2 - self.arc_angle / 2
-        self.add(Arc(
-            start_angle=start_angle,
-            angle=-self.arc_angle
-        ))
+        self.add(Arc(start_angle=start_angle, angle=-self.arc_angle))
         tick_angle_range = np.linspace(start_angle, end_angle, self.num_ticks)
         for index, angle in enumerate(tick_angle_range):
             vect = rotate_vector(RIGHT, angle)
@@ -83,10 +70,12 @@ class Speedometer(VMobject):
             self.add(tick, label)
 
         needle = Polygon(
-            LEFT, UP, RIGHT,
+            LEFT,
+            UP,
+            RIGHT,
             stroke_width=0,
             fill_opacity=1,
-            fill_color=self.needle_color
+            fill_color=self.needle_color,
         )
         needle.stretch_to_fit_width(self.needle_width)
         needle.stretch_to_fit_height(self.needle_height)
@@ -106,9 +95,7 @@ class Speedometer(VMobject):
         return self.needle.get_anchors()[1]
 
     def get_needle_angle(self):
-        return angle_of_vector(
-            self.get_needle_tip() - self.get_center()
-        )
+        return angle_of_vector(self.get_needle_tip() - self.get_center())
 
     def rotate_needle(self, angle):
         self.needle.rotate(angle, about_point=self.get_center())
@@ -154,24 +141,21 @@ class Laptop(VGroup):
         body[-1].set_fill(self.body_color)
         screen_plate = body.copy()
         keyboard = VGroup(*[
-            VGroup(*[
-                Square(**self.key_color_kwargs)
-                for x in range(12 - y % 2)
-            ]).arrange(RIGHT, buff=SMALL_BUFF)
+            VGroup(
+                *[Square(**self.key_color_kwargs)
+                  for x in range(12 - y % 2)]).arrange(RIGHT, buff=SMALL_BUFF)
             for y in range(4)
         ]).arrange(DOWN, buff=MED_SMALL_BUFF)
         keyboard.stretch_to_fit_width(
-            self.keyboard_width_to_body_width * body.get_width(),
-        )
+            self.keyboard_width_to_body_width * body.get_width(), )
         keyboard.stretch_to_fit_height(
-            self.keyboard_height_to_body_height * body.get_height(),
-        )
+            self.keyboard_height_to_body_height * body.get_height(), )
         keyboard.next_to(body, OUT, buff=0.1 * SMALL_BUFF)
         keyboard.shift(MED_SMALL_BUFF * UP)
         body.add(keyboard)
 
-        screen_plate.stretch(self.screen_thickness /
-                             self.body_dimensions[2], dim=2)
+        screen_plate.stretch(self.screen_thickness / self.body_dimensions[2],
+                             dim=2)
         screen = Rectangle(
             stroke_width=0,
             fill_color=BLACK,
@@ -182,10 +166,9 @@ class Laptop(VGroup):
         screen.next_to(screen_plate, OUT, buff=0.1 * SMALL_BUFF)
         screen_plate.add(screen)
         screen_plate.next_to(body, UP, buff=0)
-        screen_plate.rotate(
-            self.open_angle, RIGHT,
-            about_point=screen_plate.get_bottom()
-        )
+        screen_plate.rotate(self.open_angle,
+                            RIGHT,
+                            about_point=screen_plate.get_bottom())
         self.screen_plate = screen_plate
         self.screen = screen
 
@@ -193,7 +176,7 @@ class Laptop(VGroup):
             body.get_corner(UP + LEFT + OUT),
             body.get_corner(UP + RIGHT + OUT),
             color=BLACK,
-            stroke_width=2
+            stroke_width=2,
         )
         self.axis = axis
 
@@ -204,7 +187,7 @@ class Laptop(VGroup):
 
 class VideoIcon(SVGMobject):
     CONFIG = {
-        "width": FRAME_WIDTH / 12.,
+        "width": FRAME_WIDTH / 12.0,
     }
 
     def __init__(self, **kwargs):
@@ -237,25 +220,17 @@ class Clock(VGroup):
         circle = Circle(color=WHITE)
         ticks = []
         for x in range(12):
-            alpha = x / 12.
-            point = complex_to_R3(
-                np.exp(2 * np.pi * alpha * complex(0, 1))
-            )
+            alpha = x / 12.0
+            point = complex_to_R3(np.exp(2 * np.pi * alpha * complex(0, 1)))
             length = 0.2 if x % 3 == 0 else 0.1
-            ticks.append(
-                Line(point, (1 - length) * point)
-            )
+            ticks.append(Line(point, (1 - length) * point))
         self.hour_hand = Line(ORIGIN, 0.3 * UP)
         self.minute_hand = Line(ORIGIN, 0.6 * UP)
         # for hand in self.hour_hand, self.minute_hand:
         #     #Balance out where the center is
         #     hand.add(VectorizedPoint(-hand.get_end()))
 
-        VGroup.__init__(
-            self, circle,
-            self.hour_hand, self.minute_hand,
-            *ticks
-        )
+        VGroup.__init__(self, circle, self.hour_hand, self.minute_hand, *ticks)
 
 
 class ClockPassesTime(Animation):
@@ -267,23 +242,16 @@ class ClockPassesTime(Animation):
 
     def __init__(self, clock, **kwargs):
         digest_config(self, kwargs)
-        assert(isinstance(clock, Clock))
-        rot_kwargs = {
-            "axis": OUT,
-            "about_point": clock.get_center()
-        }
+        assert isinstance(clock, Clock)
+        rot_kwargs = {"axis": OUT, "about_point": clock.get_center()}
         hour_radians = -self.hours_passed * 2 * np.pi / 12
-        self.hour_rotation = Rotating(
-            clock.hour_hand,
-            angle=hour_radians,
-            **rot_kwargs
-        )
+        self.hour_rotation = Rotating(clock.hour_hand,
+                                      angle=hour_radians,
+                                      **rot_kwargs)
         self.hour_rotation.begin()
-        self.minute_rotation = Rotating(
-            clock.minute_hand,
-            angle=12 * hour_radians,
-            **rot_kwargs
-        )
+        self.minute_rotation = Rotating(clock.minute_hand,
+                                        angle=12 * hour_radians,
+                                        **rot_kwargs)
         self.minute_rotation.begin()
         Animation.__init__(self, clock, **kwargs)
 
@@ -301,7 +269,7 @@ class Bubble(SVGMobject):
         "width": 8,
         "max_height": None,
         "max_width": None,
-        "bubble_center_adjustment_factor": 1. / 8,
+        "bubble_center_adjustment_factor": 1.0 / 8,
         "file_name": None,
         "fill_color": BLACK,
         "fill_opacity": 0.8,
@@ -367,7 +335,8 @@ class Bubble(SVGMobject):
 
     def position_mobject_inside(self, mobject):
         mobject.set_max_width(self.content_scale_factor * self.get_width())
-        mobject.set_max_height(self.content_scale_factor * self.get_height() / 1.5)
+        mobject.set_max_height(self.content_scale_factor * self.get_height() /
+                               1.5)
         mobject.shift(self.get_bubble_center() - mobject.get_center())
         return mobject
 
@@ -396,17 +365,11 @@ class Bubble(SVGMobject):
 
 
 class SpeechBubble(Bubble):
-    CONFIG = {
-        "file_name": "Bubbles_speech.svg",
-        "height": 4
-    }
+    CONFIG = {"file_name": "Bubbles_speech.svg", "height": 4}
 
 
 class DoubleSpeechBubble(Bubble):
-    CONFIG = {
-        "file_name": "Bubbles_double_speech.svg",
-        "height": 4
-    }
+    CONFIG = {"file_name": "Bubbles_double_speech.svg", "height": 4}
 
 
 class ThoughtBubble(Bubble):
@@ -416,9 +379,7 @@ class ThoughtBubble(Bubble):
 
     def __init__(self, **kwargs):
         Bubble.__init__(self, **kwargs)
-        self.submobjects.sort(
-            key=lambda m: m.get_bottom()[1]
-        )
+        self.submobjects.sort(key=lambda m: m.get_bottom()[1])
 
     def make_green_screen(self):
         self.submobjects[-1].set_fill(GREEN_SCREEN, opacity=1)
@@ -467,7 +428,9 @@ class Piano(VGroup):
         key = Rectangle(*self.white_key_dims)
         key.set_fill(self.white_key_color, 1)
         key.set_stroke(width=0)
-        self.white_keys = key.get_grid(1, self.n_white_keys, buff=self.key_buff)
+        self.white_keys = key.get_grid(1,
+                                       self.n_white_keys,
+                                       buff=self.key_buff)
         self.add(*self.white_keys)
 
     def add_black_keys(self):
@@ -484,8 +447,10 @@ class Piano(VGroup):
             bk = key.copy()
             bk.move_to(midpoint(wk1.get_top(), wk2.get_top()), UP)
             big_bk = bk.copy()
-            big_bk.stretch((bk.get_width() + self.key_buff) / bk.get_width(), 0)
-            big_bk.stretch((bk.get_height() + self.key_buff) / bk.get_height(), 1)
+            big_bk.stretch((bk.get_width() + self.key_buff) / bk.get_width(),
+                           0)
+            big_bk.stretch((bk.get_height() + self.key_buff) / bk.get_height(),
+                           1)
             big_bk.move_to(bk, UP)
             for wk in wk1, wk2:
                 wk.become(Difference(wk, big_bk).match_style(wk))
@@ -505,18 +470,12 @@ class Piano3D(VGroup):
         "key_depth": 0.1,
         "black_key_shift": 0.05,
     }
-    piano_2d_config = {
-        "white_key_color": GREY_A,
-        "key_buff": 0.001
-    }
+    piano_2d_config = {"white_key_color": GREY_A, "key_buff": 0.001}
 
     def __init__(self, **kwargs):
         digest_config(self, kwargs)
         piano_2d = Piano(**self.piano_2d_config)
-        super().__init__(*(
-            Prismify(key, self.key_depth)
-            for key in piano_2d
-        ))
+        super().__init__(*(Prismify(key, self.key_depth) for key in piano_2d))
         self.set_stroke(self.stroke_color, self.stroke_width)
         self.apply_depth_test()
         # Elevate black keys

@@ -1,9 +1,7 @@
 import os
 import tempfile
 
-from manimlib.config import get_custom_config
-from manimlib.config import get_manim_dir
-
+from manimlib.config import get_custom_config, get_manim_dir
 
 CUSTOMIZATION = {}
 
@@ -18,7 +16,6 @@ def get_customization():
             directories["temporary_storage"] = tempfile.gettempdir()
 
         # Assumes all shaders are written into manimlib/shaders
-        directories["shaders"] = os.path.join(
-            get_manim_dir(), "manimlib", "shaders"
-        )
+        directories["shaders"] = os.path.join(get_manim_dir(), "manimlib",
+                                              "shaders")
     return CUSTOMIZATION

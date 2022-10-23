@@ -2,11 +2,9 @@ import numpy as np
 
 from manimlib.animation.creation import ShowCreation
 from manimlib.animation.fading import FadeOut
-from manimlib.animation.transform import ApplyMethod
-from manimlib.animation.transform import Transform
+from manimlib.animation.transform import ApplyMethod, Transform
 from manimlib.constants import *
-from manimlib.mobject.geometry import Circle
-from manimlib.mobject.geometry import Line
+from manimlib.mobject.geometry import Circle, Line
 from manimlib.mobject.matrix import Matrix
 from manimlib.mobject.svg.tex_mobject import Tex
 from manimlib.mobject.types.vectorized_mobject import VGroup
@@ -30,9 +28,8 @@ class NumericalMatrixMultiplication(Scene):
 
         left = Matrix(left_string_matrix)
         right = Matrix(right_string_matrix)
-        result = self.get_result_matrix(
-            left_string_matrix, right_string_matrix
-        )
+        result = self.get_result_matrix(left_string_matrix,
+                                        right_string_matrix)
 
         self.organize_matrices(left, right, result)
         self.animate_product(left, right, result)
@@ -45,8 +42,7 @@ class NumericalMatrixMultiplication(Scene):
                 template = "(%s)(%s)" if self.use_parens else "%s%s"
                 parts = [
                     prefix + template % (left[a][c], right[c][b])
-                    for c in range(k)
-                    for prefix in ["" if c == 0 else "+"]
+                    for c in range(k) for prefix in ["" if c == 0 else "+"]
                 ]
                 mob_matrix[a][b] = Tex(parts, next_to_buff=0.1)
         return Matrix(mob_matrix)
@@ -56,13 +52,11 @@ class NumericalMatrixMultiplication(Scene):
             "color": BLUE,
             "stroke_width": 2,
         }
-        left_rows = [
-            VGroup(*row) for row in left.get_mob_matrix()
-        ]
+        left_rows = [VGroup(*row) for row in left.get_mob_matrix()]
         h_lines = VGroup()
         for row in left_rows[:-1]:
             h_line = Line(row.get_left(), row.get_right(), **line_kwargs)
-            h_line.next_to(row, DOWN, buff=left.v_buff / 2.)
+            h_line.next_to(row, DOWN, buff=left.v_buff / 2.0)
             h_lines.add(h_line)
 
         right_cols = [
@@ -71,7 +65,7 @@ class NumericalMatrixMultiplication(Scene):
         v_lines = VGroup()
         for col in right_cols[:-1]:
             v_line = Line(col.get_top(), col.get_bottom(), **line_kwargs)
-            v_line.next_to(col, RIGHT, buff=right.h_buff / 2.)
+            v_line.next_to(col, RIGHT, buff=right.h_buff / 2.0)
             v_lines.add(v_line)
 
         self.play(ShowCreation(h_lines))
@@ -90,10 +84,7 @@ class NumericalMatrixMultiplication(Scene):
         l_matrix = left.get_mob_matrix()
         r_matrix = right.get_mob_matrix()
         result_matrix = result.get_mob_matrix()
-        circle = Circle(
-            radius=l_matrix[0][0].get_height(),
-            color=GREEN
-        )
+        circle = Circle(radius=l_matrix[0][0].get_height(), color=GREEN)
         circles = VGroup(*[
             entry.get_point_mobject()
             for entry in (l_matrix[0][0], r_matrix[0][0])
@@ -108,10 +99,8 @@ class NumericalMatrixMultiplication(Scene):
                     l_matrix[a][c].set_color(YELLOW)
                     r_matrix[c][b].set_color(YELLOW)
                 for c in range(k):
-                    start_parts = VGroup(
-                        l_matrix[a][c].copy(),
-                        r_matrix[c][b].copy()
-                    )
+                    start_parts = VGroup(l_matrix[a][c].copy(),
+                                         r_matrix[c][b].copy())
                     result_entry = result_matrix[a][b].split()[c]
 
                     new_circles = VGroup(*[
@@ -125,9 +114,7 @@ class NumericalMatrixMultiplication(Scene):
                             result_entry.copy().set_color(YELLOW),
                             path_arc=-np.pi / 2,
                             lag_ratio=0,
-                        ),
-                        *lagging_anims
-                    )
+                        ), *lagging_anims)
                     result_entry.set_color(YELLOW)
                     self.remove(start_parts)
                     lagging_anims = [

@@ -1,28 +1,37 @@
 from __future__ import annotations
 
-from functools import reduce
 import operator as op
 import re
+from functools import reduce
+from typing import TYPE_CHECKING
 
-from manimlib.constants import BLACK, WHITE
-from manimlib.constants import DOWN, LEFT, RIGHT, UP
-from manimlib.constants import FRAME_WIDTH
-from manimlib.constants import MED_LARGE_BUFF, MED_SMALL_BUFF, SMALL_BUFF
+from manimlib.constants import (
+    BLACK,
+    DOWN,
+    FRAME_WIDTH,
+    LEFT,
+    MED_LARGE_BUFF,
+    MED_SMALL_BUFF,
+    RIGHT,
+    SMALL_BUFF,
+    UP,
+    WHITE,
+)
 from manimlib.mobject.geometry import Line
 from manimlib.mobject.svg.svg_mobject import SVGMobject
 from manimlib.mobject.types.vectorized_mobject import VGroup
 from manimlib.utils.config_ops import digest_config
-from manimlib.utils.tex_file_writing import display_during_execution
-from manimlib.utils.tex_file_writing import tex_content_to_svg_file
-
-from typing import TYPE_CHECKING
+from manimlib.utils.tex_file_writing import (
+    display_during_execution,
+    tex_content_to_svg_file,
+)
 
 if TYPE_CHECKING:
-    from colour import Color
     from typing import Iterable, Union
 
-    ManimColor = Union[str, Color]
+    from colour import Color
 
+    ManimColor = Union[str, Color]
 
 SCALE_FACTOR_PER_FONT_POINT = 0.001
 
@@ -67,15 +76,14 @@ class SingleStringTex(SVGMobject):
             self.alignment,
             self.math_mode,
             self.template,
-            self.additional_preamble
+            self.additional_preamble,
         )
 
     def get_file_path(self) -> str:
         content = self.get_tex_file_body(self.tex_string)
-        with display_during_execution(f"Writing \"{self.tex_string}\""):
-            file_path = tex_content_to_svg_file(
-                content, self.template, self.additional_preamble
-            )
+        with display_during_execution(f'Writing "{self.tex_string}"'):
+            file_path = tex_content_to_svg_file(content, self.template,
+                                                self.additional_preamble)
         return file_path
 
     def get_tex_file_body(self, tex_string: str) -> str:
@@ -89,30 +97,36 @@ class SingleStringTex(SVGMobject):
 
     def modify_special_strings(self, tex: str) -> str:
         tex = tex.strip()
-        should_add_filler = reduce(op.or_, [
-            # Fraction line needs something to be over
-            tex == "\\over",
-            tex == "\\overline",
-            # Makesure sqrt has overbar
-            tex == "\\sqrt",
-            tex == "\\sqrt{",
-            # Need to add blank subscript or superscript
-            tex.endswith("_"),
-            tex.endswith("^"),
-            tex.endswith("dot"),
-        ])
+        should_add_filler = reduce(
+            op.or_,
+            [
+                # Fraction line needs something to be over
+                tex == "\\over",
+                tex == "\\overline",
+                # Makesure sqrt has overbar
+                tex == "\\sqrt",
+                tex == "\\sqrt{",
+                # Need to add blank subscript or superscript
+                tex.endswith("_"),
+                tex.endswith("^"),
+                tex.endswith("dot"),
+            ],
+        )
         if should_add_filler:
             filler = "{\\quad}"
             tex += filler
 
-        should_add_double_filler = reduce(op.or_, [
-            tex == "\\overset",
-            # TODO: these can't be used since they change
-            # the latex draw order.
-            # tex == "\\frac", # you can use \\over as a alternative 
-            # tex == "\\dfrac",
-            # tex == "\\binom",
-        ])
+        should_add_double_filler = reduce(
+            op.or_,
+            [
+                tex == "\\overset",
+                # TODO: these can't be used since they change
+                # the latex draw order.
+                # tex == "\\frac", # you can use \\over as a alternative
+                # tex == "\\dfrac",
+                # tex == "\\binom",
+            ],
+        )
         if should_add_double_filler:
             filler = "{\\quad}{\\quad}"
             tex += filler
@@ -132,10 +146,8 @@ class SingleStringTex(SVGMobject):
         # Handle imbalanced \left and \right
         num_lefts, num_rights = [
             len([
-                s for s in tex.split(substr)[1:]
-                if s and s[0] in "(){}[]|.\\"
-            ])
-            for substr in ("\\left", "\\right")
+                s for s in tex.split(substr)[1:] if s and s[0] in "(){}[]|.\\"
+            ]) for substr in ("\\left", "\\right")
         ]
         if num_lefts != num_rights:
             tex = tex.replace("\\left", "\\big")
@@ -197,16 +209,15 @@ class Tex(SingleStringTex):
         if self.organize_left_to_right:
             self.organize_submobjects_left_to_right()
 
-    def break_up_tex_strings(self, tex_strings: Iterable[str]) -> Iterable[str]:
+    def break_up_tex_strings(self,
+                             tex_strings: Iterable[str]) -> Iterable[str]:
         # Separate out any strings specified in the isolate
         # or tex_to_color_map lists.
         substrings_to_isolate = [*self.isolate, *self.tex_to_color_map.keys()]
         if len(substrings_to_isolate) == 0:
             return tex_strings
-        patterns = (
-            "({})".format(re.escape(ss))
-            for ss in substrings_to_isolate
-        )
+        patterns = ("({})".format(re.escape(ss))
+                    for ss in substrings_to_isolate)
         pattern = "|".join(patterns)
         pieces = []
         for s in tex_strings:
@@ -245,12 +256,11 @@ class Tex(SingleStringTex):
         self.set_submobjects(new_submobjects)
         return self
 
-    def get_parts_by_tex(
-        self,
-        tex: str,
-        substring: bool = True,
-        case_sensitive: bool = True
-    ) -> VGroup:
+    def get_parts_by_tex(self,
+                         tex: str,
+                         substring: bool = True,
+                         case_sensitive: bool = True) -> VGroup:
+
         def test(tex1, tex2):
             if not case_sensitive:
                 tex1 = tex1.lower()
@@ -261,8 +271,9 @@ class Tex(SingleStringTex):
                 return tex1 == tex2
 
         return VGroup(*filter(
-            lambda m: isinstance(m, SingleStringTex) and test(tex, m.get_tex()),
-            self.submobjects
+            lambda m: isinstance(m, SingleStringTex) and test(
+                tex, m.get_tex()),
+            self.submobjects,
         ))
 
     def get_part_by_tex(self, tex: str, **kwargs) -> SingleStringTex | None:
@@ -273,11 +284,9 @@ class Tex(SingleStringTex):
         self.get_parts_by_tex(tex, **kwargs).set_color(color)
         return self
 
-    def set_color_by_tex_to_color_map(
-        self,
-        tex_to_color_map: dict[str, ManimColor],
-        **kwargs
-    ):
+    def set_color_by_tex_to_color_map(self, tex_to_color_map: dict[str,
+                                                                   ManimColor],
+                                      **kwargs):
         for tex, color in list(tex_to_color_map.items()):
             self.set_color_by_tex(tex, color, **kwargs)
         return self
@@ -289,12 +298,10 @@ class Tex(SingleStringTex):
         part = self.get_part_by_tex(tex, **kwargs)
         return self.index_of_part(part, start)
 
-    def slice_by_tex(
-        self,
-        start_tex: str | None = None,
-        stop_tex: str | None = None,
-        **kwargs
-    ) -> VGroup:
+    def slice_by_tex(self,
+                     start_tex: str | None = None,
+                     stop_tex: str | None = None,
+                     **kwargs) -> VGroup:
         if start_tex is None:
             start_index = 0
         else:
@@ -303,7 +310,9 @@ class Tex(SingleStringTex):
         if stop_tex is None:
             return self[start_index:]
         else:
-            stop_index = self.index_of_part_by_tex(stop_tex, start=start_index, **kwargs)
+            stop_index = self.index_of_part_by_tex(stop_tex,
+                                                   start=start_index,
+                                                   **kwargs)
             return self[start_index:stop_index]
 
     def sort_alphabetically(self) -> None:
@@ -335,13 +344,11 @@ class BulletedList(TexText):
             dot = Tex("\\cdot").scale(self.dot_scale_factor)
             dot.next_to(part[0], LEFT, SMALL_BUFF)
             part.add_to_back(dot)
-        self.arrange(
-            DOWN,
-            aligned_edge=LEFT,
-            buff=self.buff
-        )
+        self.arrange(DOWN, aligned_edge=LEFT, buff=self.buff)
 
-    def fade_all_but(self, index_or_string: int | str, opacity: float = 0.5) -> None:
+    def fade_all_but(self,
+                     index_or_string: int | str,
+                     opacity: float = 0.5) -> None:
         arg = index_or_string
         if isinstance(arg, str):
             part = self.get_part_by_tex(arg)

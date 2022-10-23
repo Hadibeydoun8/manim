@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from manimlib.animation.animation import Animation
-from manimlib.constants import ORIGIN, OUT
-from manimlib.constants import PI, TAU
-from manimlib.utils.rate_functions import linear
-from manimlib.utils.rate_functions import smooth
-
 from typing import TYPE_CHECKING
+
+from manimlib.animation.animation import Animation
+from manimlib.constants import ORIGIN, OUT, PI, TAU
+from manimlib.utils.rate_functions import linear, smooth
 
 if TYPE_CHECKING:
     import numpy as np
@@ -25,13 +23,11 @@ class Rotating(Animation):
         "suspend_mobject_updating": False,
     }
 
-    def __init__(
-        self,
-        mobject: Mobject,
-        angle: float = TAU,
-        axis: np.ndarray = OUT,
-        **kwargs
-    ):
+    def __init__(self,
+                 mobject: Mobject,
+                 angle: float = TAU,
+                 axis: np.ndarray = OUT,
+                 **kwargs):
         self.angle = angle
         self.axis = axis
         super().__init__(mobject, **kwargs)
@@ -54,11 +50,9 @@ class Rotate(Rotating):
         "about_edge": ORIGIN,
     }
 
-    def __init__(
-        self,
-        mobject: Mobject,
-        angle: float = PI,
-        axis: np.ndarray = OUT,
-        **kwargs
-    ):
+    def __init__(self,
+                 mobject: Mobject,
+                 angle: float = PI,
+                 axis: np.ndarray = OUT,
+                 **kwargs):
         super().__init__(mobject, angle, axis, **kwargs)

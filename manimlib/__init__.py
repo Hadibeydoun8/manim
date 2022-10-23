@@ -2,10 +2,6 @@ import pkg_resources
 
 __version__ = pkg_resources.get_distribution("manimgl").version
 
-from manimlib.constants import *
-
-from manimlib.window import *
-
 from manimlib.animation.animation import *
 from manimlib.animation.composition import *
 from manimlib.animation.creation import *
@@ -19,9 +15,8 @@ from manimlib.animation.specialized import *
 from manimlib.animation.transform import *
 from manimlib.animation.transform_matching_parts import *
 from manimlib.animation.update import *
-
 from manimlib.camera.camera import *
-
+from manimlib.constants import *
 from manimlib.mobject.boolean_ops import *
 from manimlib.mobject.changing import *
 from manimlib.mobject.coordinate_systems import *
@@ -51,11 +46,9 @@ from manimlib.mobject.types.surface import *
 from manimlib.mobject.types.vectorized_mobject import *
 from manimlib.mobject.value_tracker import *
 from manimlib.mobject.vector_field import *
-
 from manimlib.scene.interactive_scene import *
 from manimlib.scene.scene import *
 from manimlib.scene.three_d_scene import *
-
 from manimlib.utils.bezier import *
 from manimlib.utils.color import *
 from manimlib.utils.config_ops import *
@@ -70,3 +63,4 @@ from manimlib.utils.rate_functions import *
 from manimlib.utils.simple_functions import *
 from manimlib.utils.sounds import *
 from manimlib.utils.space_ops import *
+from manimlib.window import *

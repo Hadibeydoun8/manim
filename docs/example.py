@@ -1,6 +1,8 @@
 from manimlib import *
 
+
 class SquareToCircle(Scene):
+
     def construct(self):
         circle = Circle()
         circle.set_fill(BLUE, opacity=0.5)
@@ -18,7 +20,9 @@ class SquareToCircle(Scene):
         # circle.insert_n_curves(10)
         # self.play(circle.animate.apply_complex_function(lambda z: z**2))
 
+
 class SquareToCircleEmbed(Scene):
+
     def construct(self):
         circle = Circle()
         circle.set_fill(BLUE, opacity=0.5)

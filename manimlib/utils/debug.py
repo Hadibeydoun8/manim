@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-import numpy as np
 import time
+from typing import TYPE_CHECKING
+
+import numpy as np
 
 from manimlib.constants import BLACK
 from manimlib.logger import log
 from manimlib.mobject.numbers import Integer
 from manimlib.mobject.types.vectorized_mobject import VGroup
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing import Callable
@@ -23,10 +23,8 @@ def print_family(mobject: Mobject, n_tabs: int = 0) -> None:
         print_family(submob, n_tabs + 1)
 
 
-def index_labels(
-    mobject: Mobject | np.ndarray, 
-    label_height: float = 0.15
-) -> VGroup:
+def index_labels(mobject: Mobject | np.ndarray,
+                 label_height: float = 0.15) -> VGroup:
     labels = VGroup()
     for n, submob in enumerate(mobject):
         label = Integer(n)
