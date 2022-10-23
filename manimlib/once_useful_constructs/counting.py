@@ -170,13 +170,16 @@ class CountingScene(Scene):
             place += 1
         return result
 
-    def is_next_digit(self):
+    @staticmethod
+    def is_next_digit():
         return False
 
-    def get_place_num(self, num, place):
+    @staticmethod
+    def get_place_num(num, place):
         return 0
 
-    def get_place_max(self, place):
+    @staticmethod
+    def get_place_max(place):
         return 0
 
 

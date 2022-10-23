@@ -167,7 +167,8 @@ class MoveToTarget(Transform):
         self.check_validity_of_input(mobject)
         super().__init__(mobject, mobject.target, **kwargs)
 
-    def check_validity_of_input(self, mobject: Mobject) -> None:
+    @staticmethod
+    def check_validity_of_input(mobject: Mobject) -> None:
         if not hasattr(mobject, "target"):
             raise Exception(
                 "MoveToTarget called on mobject"
@@ -196,7 +197,8 @@ class ApplyMethod(Transform):
         self.method_args = args
         super().__init__(method.__self__, **kwargs)
 
-    def check_validity_of_input(self, method: Callable) -> None:
+    @staticmethod
+    def check_validity_of_input(method: Callable) -> None:
         if not inspect.ismethod(method):
             raise Exception(
                 "Whoops, looks like you accidentally invoked "
@@ -310,7 +312,8 @@ class ApplyMatrix(ApplyPointwiseFunction):
 
         super().__init__(func, mobject, **kwargs)
 
-    def initialize_matrix(self, matrix: npt.ArrayLike) -> np.ndarray:
+    @staticmethod
+    def initialize_matrix(matrix: npt.ArrayLike) -> np.ndarray:
         matrix = np.array(matrix)
         if matrix.shape == (2, 2):
             new_matrix = np.identity(3)

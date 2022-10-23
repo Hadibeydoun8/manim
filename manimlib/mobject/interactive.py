@@ -44,7 +44,8 @@ class MotionMobject(Mobject):
         self.mobject.add_updater(lambda mob: None)
         self.add(mobject)
 
-    def mob_on_mouse_drag(self, mob: Mobject, event_data: dict[str, np.ndarray]) -> bool:
+    @staticmethod
+    def mob_on_mouse_drag(mob: Mobject, event_data: dict[str, np.ndarray]) -> bool:
         mob.move_to(event_data["point"])
         return False
 
@@ -124,7 +125,8 @@ class EnableDisableButton(ControlMobject):
     def toggle_value(self) -> None:
         super().set_value(not self.get_value())
 
-    def on_mouse_press(self, mob: Mobject, event_data) -> bool:
+    @staticmethod
+    def on_mouse_press(mob: Mobject, event_data) -> bool:
         mob.toggle_value()
         return False
 
@@ -168,7 +170,8 @@ class Checkbox(ControlMobject):
         else:
             self.box_content.become(self.get_cross())
 
-    def on_mouse_press(self, mob: Mobject, event_data) -> None:
+    @staticmethod
+    def on_mouse_press(mob: Mobject, event_data) -> None:
         mob.toggle_value()
         return False
 
@@ -413,7 +416,8 @@ class Textbox(ControlMobject):
         self.active_anim(self.isActive)
         return False
 
-    def on_key_press(self, mob: Mobject, event_data: dict[str, int]) -> bool | None:
+    @staticmethod
+    def on_key_press(mob: Mobject, event_data: dict[str, int]) -> bool | None:
         symbol = event_data["symbol"]
         modifiers = event_data["modifiers"]
         char = chr(symbol)

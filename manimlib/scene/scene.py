@@ -420,7 +420,8 @@ class Scene(object):
                 return mobject
         return None
 
-    def get_group(self, *mobjects):
+    @staticmethod
+    def get_group(*mobjects):
         if all(isinstance(m, VMobject) for m in mobjects):
             return VGroup(*mobjects)
         else:
@@ -485,7 +486,8 @@ class Scene(object):
         else:
             return times
 
-    def get_run_time(self, animations: Iterable[Animation]) -> float:
+    @staticmethod
+    def get_run_time(animations: Iterable[Animation]) -> float:
         return np.max([animation.get_run_time() for animation in animations])
 
     def get_animation_time_progression(
@@ -510,8 +512,8 @@ class Scene(object):
             kw["override_skip_animations"] = True
         return self.get_time_progression(duration, **kw)
 
+    @staticmethod
     def prepare_animations(
-        self,
         proto_animations: list[Animation | _AnimationBuilder],
         animation_config: dict,
     ):
@@ -780,8 +782,8 @@ class Scene(object):
         if propagate_event is not None and propagate_event is False:
             return
 
+    @staticmethod
     def on_mouse_release(
-        self,
         point: np.ndarray,
         button: int,
         mods: int
@@ -810,8 +812,8 @@ class Scene(object):
             shift = np.dot(np.transpose(transform), offset)
             frame.shift(-20.0 * shift)
 
+    @staticmethod
     def on_key_release(
-        self,
         symbol: int,
         modifiers: int
     ) -> None:

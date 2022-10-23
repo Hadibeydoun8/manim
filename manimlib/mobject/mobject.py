@@ -1545,7 +1545,8 @@ class Mobject(object):
                 self.set_coord(point[dim], dim, direction)
         return self
 
-    def get_group_class(self):
+    @staticmethod
+    def get_group_class():
         return Group
 
     # Alignment

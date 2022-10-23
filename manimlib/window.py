@@ -50,7 +50,8 @@ class Window(PygletWindow):
         self.position = initial_position
         self.position = initial_position
 
-    def find_initial_position(self, size: tuple[int, int]) -> tuple[int, int]:
+    @staticmethod
+    def find_initial_position(size: tuple[int, int]) -> tuple[int, int]:
         custom_position = get_customization()["window_position"]
         monitors = get_monitors()
         mon_index = get_customization()["window_monitor"]

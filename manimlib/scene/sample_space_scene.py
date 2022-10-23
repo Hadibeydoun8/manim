@@ -17,8 +17,9 @@ class SampleSpaceScene(Scene):
     def add_sample_space(self, **config):
         self.add(self.get_sample_space(**config))
 
+    @staticmethod
     def get_division_change_animations(
-        self, sample_space, parts, p_list,
+        sample_space, parts, p_list,
         dimension=1,
         new_label_kwargs=None,
         **kwargs
@@ -120,7 +121,8 @@ class SampleSpaceScene(Scene):
             post_rects, labels, direction, **kwargs
         )
 
-    def update_posterior_braces(self, post_rects):
+    @staticmethod
+    def update_posterior_braces(post_rects):
         braces = post_rects.braces
         labels = post_rects.labels
         for rect, brace, label in zip(post_rects, braces, labels):

@@ -151,8 +151,8 @@ class VFadeIn(Animation):
         "suspend_mobject_updating": False,
     }
 
+    @staticmethod
     def interpolate_submobject(
-        self,
         submob: VMobject,
         start: VMobject,
         alpha: float

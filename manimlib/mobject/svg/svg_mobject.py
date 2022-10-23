@@ -208,13 +208,15 @@ class SVGMobject(VMobject):
     def path_to_mobject(self, path: se.Path) -> VMobjectFromSVGPath:
         return VMobjectFromSVGPath(path, **self.path_string_config)
 
-    def line_to_mobject(self, line: se.SimpleLine) -> Line:
+    @staticmethod
+    def line_to_mobject(line: se.SimpleLine) -> Line:
         return Line(
             start=_convert_point_to_3d(line.x1, line.y1),
             end=_convert_point_to_3d(line.x2, line.y2)
         )
 
-    def rect_to_mobject(self, rect: se.Rect) -> Rectangle:
+    @staticmethod
+    def rect_to_mobject(rect: se.Rect) -> Rectangle:
         if rect.rx == 0 or rect.ry == 0:
             mob = Rectangle(
                 width=rect.width,
@@ -233,7 +235,8 @@ class SVGMobject(VMobject):
         ))
         return mob
 
-    def ellipse_to_mobject(self, ellipse: se.Circle | se.Ellipse) -> Circle:
+    @staticmethod
+    def ellipse_to_mobject(ellipse: se.Circle | se.Ellipse) -> Circle:
         mob = Circle(radius=ellipse.rx)
         mob.stretch_to_fit_height(2 * ellipse.ry)
         mob.shift(_convert_point_to_3d(
@@ -241,14 +244,16 @@ class SVGMobject(VMobject):
         ))
         return mob
 
-    def polygon_to_mobject(self, polygon: se.Polygon) -> Polygon:
+    @staticmethod
+    def polygon_to_mobject(polygon: se.Polygon) -> Polygon:
         points = [
             _convert_point_to_3d(*point)
             for point in polygon
         ]
         return Polygon(*points)
 
-    def polyline_to_mobject(self, polyline: se.Polyline) -> Polyline:
+    @staticmethod
+    def polyline_to_mobject(polyline: se.Polyline) -> Polyline:
         points = [
             _convert_point_to_3d(*point)
             for point in polyline

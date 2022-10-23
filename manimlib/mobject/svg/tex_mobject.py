@@ -151,7 +151,8 @@ class SingleStringTex(SVGMobject):
                 tex = ""
         return tex
 
-    def balance_braces(self, tex: str) -> str:
+    @staticmethod
+    def balance_braces(tex: str) -> str:
         """
         Makes Tex resiliant to unmatched braces
         """

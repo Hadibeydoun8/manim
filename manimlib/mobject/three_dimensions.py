@@ -120,7 +120,8 @@ class Cylinder(Surface):
         self.apply_matrix(z_to_vector(self.axis))
         return self
 
-    def uv_func(self, u: float, v: float) -> np.ndarray:
+    @staticmethod
+    def uv_func(u: float, v: float) -> np.ndarray:
         return np.array([np.cos(u), np.sin(u), v])
 
 
@@ -153,7 +154,8 @@ class Disk3D(Surface):
         super().init_points()
         self.scale(self.radius)
 
-    def uv_func(self, u: float, v: float) -> np.ndarray:
+    @staticmethod
+    def uv_func(u: float, v: float) -> np.ndarray:
         return np.array([
             u * np.cos(v),
             u * np.sin(v),
@@ -173,7 +175,8 @@ class Square3D(Surface):
         super().init_points()
         self.scale(self.side_length / 2)
 
-    def uv_func(self, u: float, v: float) -> np.ndarray:
+    @staticmethod
+    def uv_func(u: float, v: float) -> np.ndarray:
         return np.array([u, v, 0])
 
 

@@ -122,8 +122,8 @@ class CoordinateSystem(ABC):
             edge, direction, **kwargs
         )
 
+    @staticmethod
     def get_axis_label(
-        self,
         label_tex: str,
         axis: np.ndarray,
         edge: np.ndarray,

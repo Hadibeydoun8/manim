@@ -55,7 +55,8 @@ class SampleSpace(Rectangle):
     def add_label(self, label: str) -> None:
         self.label = label
 
-    def complete_p_list(self, p_list: list[float]) -> list[float]:
+    @staticmethod
+    def complete_p_list(p_list: list[float]) -> list[float]:
         new_p_list = listify(p_list)
         remainder = 1.0 - sum(new_p_list)
         if abs(remainder) > EPSILON:

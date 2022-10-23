@@ -121,7 +121,8 @@ class VectorScene(Scene):
             ]
         ])
 
-    def get_vector_label(self, vector, label,
+    @staticmethod
+    def get_vector_label(vector, label,
                          at_tip=False,
                          direction="left",
                          rotate=False,
@@ -160,12 +161,14 @@ class VectorScene(Scene):
         self.add(label)
         return label
 
-    def position_x_coordinate(self, x_coord, x_line, vector):
+    @staticmethod
+    def position_x_coordinate(x_coord, x_line, vector):
         x_coord.next_to(x_line, -np.sign(vector[1]) * UP)
         x_coord.set_color(X_COLOR)
         return x_coord
 
-    def position_y_coordinate(self, y_coord, y_line, vector):
+    @staticmethod
+    def position_y_coordinate(y_coord, y_line, vector):
         y_coord.next_to(y_line, np.sign(vector[0]) * RIGHT)
         y_coord.set_color(Y_COLOR)
         return y_coord
@@ -432,7 +435,8 @@ class LinearTransformationScene(VectorScene):
     def get_matrix_transformation(self, matrix):
         return self.get_transposed_matrix_transformation(np.array(matrix).T)
 
-    def get_transposed_matrix_transformation(self, transposed_matrix):
+    @staticmethod
+    def get_transposed_matrix_transformation(transposed_matrix):
         transposed_matrix = np.array(transposed_matrix)
         if transposed_matrix.shape == (2, 2):
             new_matrix = np.identity(3)

@@ -57,7 +57,8 @@ class RearrangeEquation(Scene):
         ])
         self.wait()
 
-    def get_mobs_from_terms(self, start_terms, end_terms):
+    @staticmethod
+    def get_mobs_from_terms(start_terms, end_terms):
         """
         Need to ensure that all image mobjects for a tex expression
         stemming from the same string are point-for-point copies of one

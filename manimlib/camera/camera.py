@@ -415,7 +415,8 @@ class Camera(object):
             "single_use": single_use,
         }
 
-    def release_render_group(self, render_group: dict[str]) -> None:
+    @staticmethod
+    def release_render_group(render_group: dict[str]) -> None:
         for key in ["vbo", "ibo", "vao"]:
             if render_group[key] is not None:
                 render_group[key].release()

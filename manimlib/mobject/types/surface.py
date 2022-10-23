@@ -54,7 +54,8 @@ class Surface(Mobject):
         super().__init__(**kwargs)
         self.compute_triangle_indices()
 
-    def uv_func(self, u: float, v: float) -> tuple[float, float, float]:
+    @staticmethod
+    def uv_func(u: float, v: float) -> tuple[float, float, float]:
         # To be implemented in subclasses
         return (u, v, 0.0)
 
@@ -136,8 +137,8 @@ class Surface(Mobject):
         ]))
         return self
 
+    @staticmethod
     def get_partial_points_array(
-        self,
         points: np.ndarray,
         a: float,
         b: float,
