@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import numpy as np
 
 from manimlib.animation.animation import Animation
@@ -9,13 +11,10 @@ from manimlib.mobject.mobject import Group
 from manimlib.utils.bezier import interpolate
 from manimlib.utils.rate_functions import there_and_back
 
-from typing import TYPE_CHECKING
-
 if TYPE_CHECKING:
     from manimlib.mobject.mobject import Mobject
     from manimlib.mobject.types.vectorized_mobject import VMobject
     from manimlib.scene.scene import Scene
-
 
 DEFAULT_FADE_LAG_RATIO = 0
 
@@ -25,13 +24,11 @@ class Fade(Transform):
         "lag_ratio": DEFAULT_FADE_LAG_RATIO,
     }
 
-    def __init__(
-        self,
-        mobject: Mobject,
-        shift: np.ndarray = ORIGIN,
-        scale: float = 1,
-        **kwargs
-    ):
+    def __init__(self,
+                 mobject: Mobject,
+                 shift: np.ndarray = ORIGIN,
+                 scale: float = 1,
+                 **kwargs):
         self.shift_vect = shift
         self.scale_factor = scale
         super().__init__(mobject, **kwargs)
@@ -69,6 +66,7 @@ class FadeOut(Fade):
 
 
 class FadeInFromPoint(FadeIn):
+
     def __init__(self, mobject: Mobject, point: np.ndarray, **kwargs):
         super().__init__(
             mobject,
@@ -79,6 +77,7 @@ class FadeInFromPoint(FadeIn):
 
 
 class FadeOutToPoint(FadeOut):
+
     def __init__(self, mobject: Mobject, point: np.ndarray, **kwargs):
         super().__init__(
             mobject,
@@ -97,10 +96,7 @@ class FadeTransform(Transform):
     def __init__(self, mobject: Mobject, target_mobject: Mobject, **kwargs):
         self.to_add_on_completion = target_mobject
         mobject.save_state()
-        super().__init__(
-            Group(mobject, target_mobject.copy()),
-            **kwargs
-        )
+        super().__init__(Group(mobject, target_mobject.copy()), **kwargs)
 
     def begin(self) -> None:
         self.ending_mobject = self.mobject.copy()
@@ -113,7 +109,9 @@ class FadeTransform(Transform):
             self.ghost_to(m0, m1)
 
     def ghost_to(self, source: Mobject, target: Mobject) -> None:
-        source.replace(target, stretch=self.stretch, dim_to_match=self.dim_to_match)
+        source.replace(target,
+                       stretch=self.stretch,
+                       dim_to_match=self.dim_to_match)
         source.set_opacity(0)
 
     def get_all_mobjects(self) -> list[Mobject]:
@@ -134,6 +132,7 @@ class FadeTransform(Transform):
 
 
 class FadeTransformPieces(FadeTransform):
+
     def begin(self) -> None:
         self.mobject[0].align_family(self.mobject[1])
         super().begin()
@@ -147,22 +146,18 @@ class VFadeIn(Animation):
     """
     VFadeIn and VFadeOut only work for VMobjects,
     """
+
     CONFIG = {
         "suspend_mobject_updating": False,
     }
 
-    def interpolate_submobject(
-        self,
-        submob: VMobject,
-        start: VMobject,
-        alpha: float
-    ) -> None:
+    @staticmethod
+    def interpolate_submobject(submob: VMobject, start: VMobject,
+                               alpha: float) -> None:
         submob.set_stroke(
-            opacity=interpolate(0, start.get_stroke_opacity(), alpha)
-        )
+            opacity=interpolate(0, start.get_stroke_opacity(), alpha))
         submob.set_fill(
-            opacity=interpolate(0, start.get_fill_opacity(), alpha)
-        )
+            opacity=interpolate(0, start.get_fill_opacity(), alpha))
 
 
 class VFadeOut(VFadeIn):
@@ -172,12 +167,8 @@ class VFadeOut(VFadeIn):
         "final_alpha_value": 0,
     }
 
-    def interpolate_submobject(
-        self,
-        submob: VMobject,
-        start: VMobject,
-        alpha: float
-    ) -> None:
+    def interpolate_submobject(self, submob: VMobject, start: VMobject,
+                               alpha: float) -> None:
         super().interpolate_submobject(submob, start, 1 - alpha)
 
 
