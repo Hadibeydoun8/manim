@@ -1,20 +1,16 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
 import numpy as np
 
 from manimlib.animation.animation import Animation
 from manimlib.mobject.svg.string_mobject import StringMobject
-from manimlib.mobject.types.vectorized_mobject import VGroup
 from manimlib.mobject.types.vectorized_mobject import VMobject
 from manimlib.utils.bezier import integer_interpolate
 from manimlib.utils.config_ops import digest_config
-from manimlib.utils.rate_functions import linear
-from manimlib.utils.rate_functions import double_smooth
-from manimlib.utils.rate_functions import smooth
-
-from typing import TYPE_CHECKING
+from manimlib.utils.rate_functions import double_smooth, linear, smooth
 
 if TYPE_CHECKING:
     from manimlib.mobject.mobject import Mobject
@@ -24,6 +20,7 @@ class ShowPartial(Animation, ABC):
     """
     Abstract class for ShowCreation and ShowPassingFlash
     """
+
     CONFIG = {
         "should_match_start": False,
     }
@@ -31,21 +28,16 @@ class ShowPartial(Animation, ABC):
     def begin(self) -> None:
         super().begin()
         if not self.should_match_start:
-            self.mobject.lock_matching_data(self.mobject, self.starting_mobject)
+            self.mobject.lock_matching_data(self.mobject,
+                                            self.starting_mobject)
 
     def finish(self) -> None:
         super().finish()
         self.mobject.unlock_data()
 
-    def interpolate_submobject(
-        self,
-        submob: VMobject,
-        start_submob: VMobject,
-        alpha: float
-    ) -> None:
-        submob.pointwise_become_partial(
-            start_submob, *self.get_bounds(alpha)
-        )
+    def interpolate_submobject(self, submob: VMobject, start_submob: VMobject,
+                               alpha: float) -> None:
+        submob.pointwise_become_partial(start_submob, *self.get_bounds(alpha))
 
     @abstractmethod
     def get_bounds(self, alpha: float) -> tuple[float, float]:
@@ -80,11 +72,9 @@ class DrawBorderThenFill(Animation):
     }
 
     def __init__(self, vmobject: VMobject, **kwargs):
-        assert(isinstance(vmobject, VMobject))
-        self.sm_to_index = dict([
-            (hash(sm), 0)
-            for sm in vmobject.get_family()
-        ])
+        assert isinstance(vmobject, VMobject)
+        self.sm_to_index = dict([(hash(sm), 0)
+                                 for sm in vmobject.get_family()])
         super().__init__(vmobject, **kwargs)
 
     def begin(self) -> None:
@@ -105,10 +95,8 @@ class DrawBorderThenFill(Animation):
         outline = self.mobject.copy()
         outline.set_fill(opacity=0)
         for sm in outline.get_family():
-            sm.set_stroke(
-                color=self.get_stroke_color(sm),
-                width=float(self.stroke_width)
-            )
+            sm.set_stroke(color=self.get_stroke_color(sm),
+                          width=float(self.stroke_width))
         return outline
 
     def get_stroke_color(self, vmobject: VMobject) -> str:
@@ -121,13 +109,8 @@ class DrawBorderThenFill(Animation):
     def get_all_mobjects(self) -> list[VMobject]:
         return [*super().get_all_mobjects(), self.outline]
 
-    def interpolate_submobject(
-        self,
-        submob: VMobject,
-        start: VMobject,
-        outline: VMobject,
-        alpha: float
-    ) -> None:
+    def interpolate_submobject(self, submob: VMobject, start: VMobject,
+                               outline: VMobject, alpha: float) -> None:
         index, subalpha = integer_interpolate(0, 2, alpha)
 
         if index == 1 and self.sm_to_index[hash(submob)] == 0:
