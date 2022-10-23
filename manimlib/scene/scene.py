@@ -83,12 +83,12 @@ class Scene(object):
         self.camera: Camera = self.camera_class(**self.camera_config)
         self.file_writer = SceneFileWriter(self, **self.file_writer_config)
         self.mobjects: list[Mobject] = [self.camera.frame]
-        self.id_to_mobject_map: dict[int, Mobject] = dict()
+        self.id_to_mobject_map: dict[int, Mobject] = {}
         self.num_plays: int = 0
         self.time: float = 0
         self.skip_time: float = 0
         self.original_skipping_status: bool = self.skip_animations
-        self.checkpoint_states: dict[str, list[tuple[Mobject, Mobject]]] = dict()
+        self.checkpoint_states: dict[str, list[tuple[Mobject, Mobject]]] = {}
 
         if self.start_at_animation_number is not None:
             self.skip_animations = True
@@ -706,7 +706,7 @@ class Scene(object):
         self.restore_state(self.checkpoint_states[key])
 
     def clear_checkpoints(self):
-        self.checkpoint_states = dict()
+        self.checkpoint_states = {}
 
     def save_mobject_to_file(self, mobject: Mobject, file_path: str | None = None) -> None:
         if file_path is None:
@@ -871,7 +871,7 @@ class SceneState():
             for mob in ignore:
                 self.mobjects_to_copies.pop(mob, None)
 
-        last_m2c = scene.undo_stack[-1].mobjects_to_copies if scene.undo_stack else dict()
+        last_m2c = scene.undo_stack[-1].mobjects_to_copies if scene.undo_stack else {}
         for mob in self.mobjects_to_copies:
             # If it hasn't changed since the last state, just point to the
             # same copy as before

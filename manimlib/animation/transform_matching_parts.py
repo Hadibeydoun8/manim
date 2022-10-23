@@ -31,7 +31,7 @@ class TransformMatchingParts(AnimationGroup):
         "group_type": Group,
         "transform_mismatches": False,
         "fade_transform_mismatches": False,
-        "key_map": dict(),
+        "key_map": {},
     }
 
     def __init__(self, mobject: Mobject, target_mobject: Mobject, **kwargs):

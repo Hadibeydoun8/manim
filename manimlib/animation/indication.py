@@ -189,7 +189,7 @@ class VShowPassingFlash(Animation):
         self.mobject.align_stroke_width_data_to_points()
         # Compute an array of stroke widths for each submobject
         # which tapers out at either end
-        self.submob_to_anchor_widths = dict()
+        self.submob_to_anchor_widths = {}
         for sm in self.mobject.get_family():
             original_widths = sm.get_stroke_widths()
             anchor_widths = np.array([*original_widths[0::3], original_widths[-1]])

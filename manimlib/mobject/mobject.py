@@ -526,7 +526,7 @@ class Mobject(object):
         @wraps(func)
         def wrapper(self, *args, **kwargs):
             uncopied_attrs = ["parents", "target", "saved_state"]
-            stash = dict()
+            stash = {}
             for attr in uncopied_attrs:
                 if hasattr(self, attr):
                     value = getattr(self, attr)
