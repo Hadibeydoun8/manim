@@ -54,8 +54,7 @@ def prompt_user_for_choice(scene_classes):
 
 
 def get_scene_config(config):
-    return dict([
-        (key, config[key])
+    return {key: config[key]
         for key in [
             "window_config",
             "camera_config",
@@ -67,8 +66,7 @@ def get_scene_config(config):
             "show_animation_progress",
             "preview",
             "presenter_mode",
-        ]
-    ])
+        ]}
 
 
 def compute_total_frames(scene_class, scene_config):

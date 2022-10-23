@@ -81,10 +81,8 @@ class DrawBorderThenFill(Animation):
 
     def __init__(self, vmobject: VMobject, **kwargs):
         assert(isinstance(vmobject, VMobject))
-        self.sm_to_index = dict([
-            (hash(sm), 0)
-            for sm in vmobject.get_family()
-        ])
+        self.sm_to_index = {hash(sm): 0
+            for sm in vmobject.get_family()}
         super().__init__(vmobject, **kwargs)
 
     def begin(self) -> None:

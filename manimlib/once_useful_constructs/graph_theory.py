@@ -325,7 +325,7 @@ class DiscreteGraphScene(Scene):
             tuple(reversed(pair))
             for pair in self.spanning_tree_index_pairs
         ])
-        children_of = dict([(index, []) for index in indices])
+        children_of = {index: [] for index in indices}
         for child in parent_of:
             children_of[parent_of[child]].append(child)
 
