@@ -20,7 +20,7 @@ def filtered_locals(caller_locals):
     return result
 
 
-def digest_config(obj, kwargs, caller_locals={}):
+def digest_config(obj, kwargs, caller_locals=None):
     """
     Sets init args and CONFIG values as local variables
 
@@ -29,6 +29,8 @@ def digest_config(obj, kwargs, caller_locals={}):
     be easily passed into instantiation, and is attached
     as an attribute of the object.
     """
+    if caller_locals is None:
+        caller_locals = {}
 
     # Assemble list of CONFIGs from all super classes
     classes_in_hierarchy = [obj.__class__]
@@ -90,6 +92,5 @@ def digest_locals(obj, keys=None):
 
 
 class DictAsObject:
-
     def __init__(self, dict):
         self.__dict__ = dict
