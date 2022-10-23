@@ -9,6 +9,7 @@ from manimlib.scene.scene import Scene
 
 
 class BlankScene(InteractiveScene):
+
     def construct(self):
         exec(get_custom_config()["universal_import_line"])
         self.embed()
@@ -34,13 +35,12 @@ def prompt_user_for_choice(scene_classes):
         print(f"{str(idx).zfill(max_digits)}: {name}")
         name_to_class[name] = scene_class
     try:
-        user_input = input(
-            "\nThat module has multiple scenes, "
-            "which ones would you like to render?"
-            "\nScene Name or Number: "
-        )
+        user_input = input("\nThat module has multiple scenes, "
+                           "which ones would you like to render?"
+                           "\nScene Name or Number: ")
         return [
-            name_to_class[split_str] if not split_str.isnumeric() else scene_classes[int(split_str) - 1]
+            name_to_class[split_str]
+            if not split_str.isnumeric() else scene_classes[int(split_str) - 1]
             for split_str in user_input.replace(" ", "").split(",")
         ]
     except IndexError:
@@ -54,7 +54,8 @@ def prompt_user_for_choice(scene_classes):
 
 
 def get_scene_config(config):
-    return {key: config[key]
+    return {
+        key: config[key]
         for key in [
             "window_config",
             "camera_config",
@@ -66,7 +67,8 @@ def get_scene_config(config):
             "show_animation_progress",
             "preview",
             "presenter_mode",
-        ]}
+        ]
+    }
 
 
 def compute_total_frames(scene_class, scene_config):
@@ -100,7 +102,8 @@ def get_scenes_to_render(scene_classes, scene_config, config):
             if scene_class.__name__ == scene_name:
                 fw_config = scene_config["file_writer_config"]
                 if fw_config["write_to_movie"]:
-                    fw_config["total_frames"] = compute_total_frames(scene_class, scene_config)
+                    fw_config["total_frames"] = compute_total_frames(
+                        scene_class, scene_config)
                 scene = scene_class(**scene_config)
                 result.append(scene)
                 found = True
@@ -121,11 +124,8 @@ def get_scene_classes_from_module(module):
         return module.SCENES_IN_ORDER
     else:
         return [
-            member[1]
-            for member in inspect.getmembers(
-                module,
-                lambda x: is_child_scene(x, module)
-            )
+            member[1] for member in inspect.getmembers(
+                module, lambda x: is_child_scene(x, module))
         ]
 
 
