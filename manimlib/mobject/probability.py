@@ -1,28 +1,39 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import numpy as np
 
-from manimlib.constants import BLUE, BLUE_E, GREEN_E, GREY_B, GREY_D, MAROON_B, YELLOW
-from manimlib.constants import DOWN, LEFT, RIGHT, UP
-from manimlib.constants import MED_LARGE_BUFF, MED_SMALL_BUFF, SMALL_BUFF
-from manimlib.mobject.geometry import Line
-from manimlib.mobject.geometry import Rectangle
+from manimlib.constants import (
+    BLUE,
+    BLUE_E,
+    DOWN,
+    GREEN_E,
+    GREY_B,
+    GREY_D,
+    LEFT,
+    MAROON_B,
+    MED_LARGE_BUFF,
+    MED_SMALL_BUFF,
+    RIGHT,
+    SMALL_BUFF,
+    UP,
+    YELLOW,
+)
+from manimlib.mobject.geometry import Line, Rectangle
 from manimlib.mobject.mobject import Mobject
 from manimlib.mobject.svg.brace import Brace
-from manimlib.mobject.svg.tex_mobject import Tex
-from manimlib.mobject.svg.tex_mobject import TexText
+from manimlib.mobject.svg.tex_mobject import Tex, TexText
 from manimlib.mobject.types.vectorized_mobject import VGroup
 from manimlib.utils.color import color_gradient
 from manimlib.utils.iterables import listify
 
-from typing import TYPE_CHECKING
-
 if TYPE_CHECKING:
-    from colour import Color
     from typing import Iterable, Union
 
-    ManimColor = Union[str, Color]
+    from colour import Color
 
+    ManimColor = Union[str, Color]
 
 EPSILON = 0.0001
 
@@ -39,11 +50,9 @@ class SampleSpace(Rectangle):
         "default_label_scale_val": 1,
     }
 
-    def add_title(
-        self,
-        title: str = "Sample space",
-        buff: float = MED_SMALL_BUFF
-    ) -> None:
+    def add_title(self,
+                  title: str = "Sample space",
+                  buff: float = MED_SMALL_BUFF) -> None:
         # TODO, should this really exist in SampleSpaceScene
         title_mob = TexText(title)
         if title_mob.get_width() > self.get_width():
@@ -67,7 +76,7 @@ class SampleSpace(Rectangle):
         p_list: list[float],
         dim: int,
         colors: Iterable[ManimColor],
-        vect: np.ndarray
+        vect: np.ndarray,
     ) -> VGroup:
         p_list = self.complete_p_list(p_list)
         colors = color_gradient(colors, len(p_list))
@@ -88,7 +97,7 @@ class SampleSpace(Rectangle):
         self,
         p_list: list[float],
         colors: Iterable[ManimColor] = None,
-        vect: np.ndarray = DOWN
+        vect: np.ndarray = DOWN,
     ) -> VGroup:
         if colors is None:
             colors = [GREEN_E, BLUE_E]
@@ -98,7 +107,7 @@ class SampleSpace(Rectangle):
         self,
         p_list: list[float],
         colors: Iterable[ManimColor] = None,
-        vect: np.ndarray = RIGHT
+        vect: np.ndarray = RIGHT,
     ) -> VGroup:
         if colors is None:
             colors = [MAROON_B, YELLOW]
@@ -122,10 +131,7 @@ class SampleSpace(Rectangle):
         label_mobs = VGroup()
         braces = VGroup()
         for label, part in zip(labels, parts):
-            brace = Brace(
-                part, direction,
-                buff=buff
-            )
+            brace = Brace(part, direction, buff=buff)
             if isinstance(label, Mobject):
                 label_mob = label
             else:
@@ -144,33 +150,26 @@ class SampleSpace(Rectangle):
         }
         return VGroup(parts.braces, parts.labels)
 
-    def get_side_braces_and_labels(
-        self,
-        labels: str,
-        direction: np.ndarray = LEFT,
-        **kwargs
-    ) -> VGroup:
-        assert(hasattr(self, "horizontal_parts"))
+    def get_side_braces_and_labels(self,
+                                   labels: str,
+                                   direction: np.ndarray = LEFT,
+                                   **kwargs) -> VGroup:
+        assert hasattr(self, "horizontal_parts")
         parts = self.horizontal_parts
-        return self.get_subdivision_braces_and_labels(parts, labels, direction, **kwargs)
+        return self.get_subdivision_braces_and_labels(parts, labels, direction,
+                                                      **kwargs)
 
-    def get_top_braces_and_labels(
-        self,
-        labels: str,
-        **kwargs
-    ) -> VGroup:
-        assert(hasattr(self, "vertical_parts"))
+    def get_top_braces_and_labels(self, labels: str, **kwargs) -> VGroup:
+        assert hasattr(self, "vertical_parts")
         parts = self.vertical_parts
-        return self.get_subdivision_braces_and_labels(parts, labels, UP, **kwargs)
+        return self.get_subdivision_braces_and_labels(parts, labels, UP,
+                                                      **kwargs)
 
-    def get_bottom_braces_and_labels(
-        self,
-        labels: str,
-        **kwargs
-    ) -> VGroup:
-        assert(hasattr(self, "vertical_parts"))
+    def get_bottom_braces_and_labels(self, labels: str, **kwargs) -> VGroup:
+        assert hasattr(self, "vertical_parts")
         parts = self.vertical_parts
-        return self.get_subdivision_braces_and_labels(parts, labels, DOWN, **kwargs)
+        return self.get_subdivision_braces_and_labels(parts, labels, DOWN,
+                                                      **kwargs)
 
     def add_braces_and_labels(self) -> None:
         for attr in "horizontal_parts", "vertical_parts":
@@ -233,7 +232,8 @@ class BarChart(VGroup):
         if self.include_x_ticks == True:
             x_ticks = VGroup()
             widths = np.linspace(0, self.width, self.n_ticks_x + 1)
-            label_values = np.linspace(0, len(self.bar_names), self.n_ticks_x + 1)
+            label_values = np.linspace(0, len(self.bar_names),
+                                       self.n_ticks_x + 1)
             for x, value in zip(widths, label_values):
                 x_tick = Line(UP, DOWN)
                 x_tick.set_height(self.tick_height)
@@ -282,7 +282,5 @@ class BarChart(VGroup):
     def change_bar_values(self, values: Iterable[float]) -> None:
         for bar, value in zip(self.bars, values):
             bar_bottom = bar.get_bottom()
-            bar.stretch_to_fit_height(
-                (value / self.max_value) * self.height
-            )
+            bar.stretch_to_fit_height((value / self.max_value) * self.height)
             bar.move_to(bar_bottom, DOWN)

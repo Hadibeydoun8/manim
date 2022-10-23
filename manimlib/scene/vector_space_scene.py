@@ -1,38 +1,45 @@
 import numpy as np
 
 from manimlib.animation.animation import Animation
-from manimlib.animation.creation import ShowCreation
-from manimlib.animation.creation import Write
+from manimlib.animation.creation import ShowCreation, Write
 from manimlib.animation.fading import FadeOut
 from manimlib.animation.growing import GrowArrow
-from manimlib.animation.transform import ApplyFunction
-from manimlib.animation.transform import ApplyPointwiseFunction
-from manimlib.animation.transform import Transform
-from manimlib.constants import BLACK, BLUE_D, GREEN_C, RED_C, GREY, WHITE, YELLOW
-from manimlib.constants import DL, DOWN, ORIGIN, RIGHT, UP
-from manimlib.constants import FRAME_WIDTH, FRAME_X_RADIUS, FRAME_Y_RADIUS
-from manimlib.constants import SMALL_BUFF
-from manimlib.mobject.coordinate_systems import Axes
-from manimlib.mobject.coordinate_systems import NumberPlane
-from manimlib.mobject.geometry import Arrow
-from manimlib.mobject.geometry import Dot
-from manimlib.mobject.geometry import Line
-from manimlib.mobject.geometry import Rectangle
-from manimlib.mobject.geometry import Vector
-from manimlib.mobject.matrix import Matrix
-from manimlib.mobject.matrix import VECTOR_LABEL_SCALE_FACTOR
-from manimlib.mobject.matrix import vector_coordinate_label
+from manimlib.animation.transform import (
+    ApplyFunction,
+    ApplyPointwiseFunction,
+    Transform,
+)
+from manimlib.constants import (
+    BLACK,
+    BLUE_D,
+    DL,
+    DOWN,
+    FRAME_WIDTH,
+    FRAME_X_RADIUS,
+    FRAME_Y_RADIUS,
+    GREEN_C,
+    GREY,
+    ORIGIN,
+    RED_C,
+    RIGHT,
+    SMALL_BUFF,
+    UP,
+    WHITE,
+    YELLOW,
+)
+from manimlib.mobject.coordinate_systems import Axes, NumberPlane
+from manimlib.mobject.geometry import Arrow, Dot, Line, Rectangle, Vector
+from manimlib.mobject.matrix import (
+    VECTOR_LABEL_SCALE_FACTOR,
+    Matrix,
+    vector_coordinate_label,
+)
 from manimlib.mobject.mobject import Mobject
-from manimlib.mobject.svg.tex_mobject import Tex
-from manimlib.mobject.svg.tex_mobject import TexText
-from manimlib.mobject.types.vectorized_mobject import VGroup
-from manimlib.mobject.types.vectorized_mobject import VMobject
+from manimlib.mobject.svg.tex_mobject import Tex, TexText
+from manimlib.mobject.types.vectorized_mobject import VGroup, VMobject
 from manimlib.scene.scene import Scene
-from manimlib.utils.rate_functions import rush_from
-from manimlib.utils.rate_functions import rush_into
-from manimlib.utils.space_ops import angle_of_vector
-from manimlib.utils.space_ops import get_norm
-
+from manimlib.utils.rate_functions import rush_from, rush_into
+from manimlib.utils.space_ops import angle_of_vector, get_norm
 
 X_COLOR = GREEN_C
 Y_COLOR = RED_C
@@ -46,9 +53,7 @@ Z_COLOR = BLUE_D
 # Also, methods I would have thought of as getters, like coords_to_vector, are
 # actually doing a lot of animating.
 class VectorScene(Scene):
-    CONFIG = {
-        "basis_vector_stroke_width": 6
-    }
+    CONFIG = {"basis_vector_stroke_width": 6}
 
     def add_plane(self, animate=False, **kwargs):
         plane = NumberPlane(**kwargs)
@@ -74,12 +79,10 @@ class VectorScene(Scene):
         self.freeze_background()
 
     def get_vector(self, numerical_vector, **kwargs):
-        return Arrow(
-            self.plane.coords_to_point(0, 0),
-            self.plane.coords_to_point(*numerical_vector[:2]),
-            buff=0,
-            **kwargs
-        )
+        return Arrow(self.plane.coords_to_point(0, 0),
+                     self.plane.coords_to_point(*numerical_vector[:2]),
+                     buff=0,
+                     **kwargs)
 
     def add_vector(self, vector, color=YELLOW, animate=True, **kwargs):
         if not isinstance(vector, Arrow):
@@ -97,36 +100,31 @@ class VectorScene(Scene):
     def get_basis_vectors(self, i_hat_color=X_COLOR, j_hat_color=Y_COLOR):
         return VGroup(*[
             Vector(
-                vect,
-                color=color,
-                stroke_width=self.basis_vector_stroke_width
-            )
-            for vect, color in [
-                ([1, 0], i_hat_color),
-                ([0, 1], j_hat_color)
-            ]
+                vect, color=color, stroke_width=self.basis_vector_stroke_width)
+            for vect, color in [([1, 0], i_hat_color), ([0, 1], j_hat_color)]
         ])
 
     def get_basis_vector_labels(self, **kwargs):
         i_hat, j_hat = self.get_basis_vectors()
         return VGroup(*[
             self.get_vector_label(
-                vect, label, color=color,
-                label_scale_factor=1,
-                **kwargs
-            )
+                vect, label, color=color, label_scale_factor=1, **kwargs)
             for vect, label, color in [
                 (i_hat, "\\hat{\\imath}", X_COLOR),
                 (j_hat, "\\hat{\\jmath}", Y_COLOR),
             ]
         ])
 
-    def get_vector_label(self, vector, label,
-                         at_tip=False,
-                         direction="left",
-                         rotate=False,
-                         color=None,
-                         label_scale_factor=VECTOR_LABEL_SCALE_FACTOR):
+    def get_vector_label(
+        self,
+        vector,
+        label,
+        at_tip=False,
+        direction="left",
+        rotate=False,
+        color=None,
+        label_scale_factor=VECTOR_LABEL_SCALE_FACTOR,
+    ):
         if not isinstance(label, Tex):
             if len(label) == 1:
                 label = "\\vec{\\textbf{%s}}" % label
@@ -170,7 +168,10 @@ class VectorScene(Scene):
         y_coord.set_color(Y_COLOR)
         return y_coord
 
-    def coords_to_vector(self, vector, coords_start=2 * RIGHT + 2 * UP, clean_up=True):
+    def coords_to_vector(self,
+                         vector,
+                         coords_start=2 * RIGHT + 2 * UP,
+                         clean_up=True):
         starting_mobjects = list(self.mobjects)
         array = Matrix(vector)
         array.shift(coords_start)
@@ -183,17 +184,16 @@ class VectorScene(Scene):
 
         self.play(Write(array, run_time=1))
         self.wait()
-        self.play(ApplyFunction(
-            lambda x: self.position_x_coordinate(x, x_line, vector),
-            x_coord
-        ))
+        self.play(
+            ApplyFunction(
+                lambda x: self.position_x_coordinate(x, x_line, vector),
+                x_coord))
         self.play(ShowCreation(x_line))
         self.play(
             ApplyFunction(
                 lambda y: self.position_y_coordinate(y, y_line, vector),
-                y_coord
-            ),
-            FadeOut(array.get_brackets())
+                y_coord),
+            FadeOut(array.get_brackets()),
         )
         y_coord, brackets = self.get_mobjects_from_last_animation()
         self.play(ShowCreation(y_line))
@@ -218,26 +218,16 @@ class VectorScene(Scene):
         x_line.set_color(X_COLOR)
         y_line.set_color(Y_COLOR)
         x_coord, y_coord = array.get_mob_matrix().flatten()
-        x_coord_start = self.position_x_coordinate(
-            x_coord.copy(), x_line, vector
-        )
-        y_coord_start = self.position_y_coordinate(
-            y_coord.copy(), y_line, vector
-        )
+        x_coord_start = self.position_x_coordinate(x_coord.copy(), x_line,
+                                                   vector)
+        y_coord_start = self.position_y_coordinate(y_coord.copy(), y_line,
+                                                   vector)
         brackets = array.get_brackets()
 
         if show_creation:
             self.play(ShowCreation(arrow))
-        self.play(
-            ShowCreation(x_line),
-            Write(x_coord_start),
-            run_time=1
-        )
-        self.play(
-            ShowCreation(y_line),
-            Write(y_coord_start),
-            run_time=1
-        )
+        self.play(ShowCreation(x_line), Write(x_coord_start), run_time=1)
+        self.play(ShowCreation(y_line), Write(y_coord_start), run_time=1)
         self.wait()
         self.play(
             Transform(x_coord_start, x_coord, lag_ratio=0),
@@ -261,20 +251,15 @@ class VectorScene(Scene):
         x_max = int(FRAME_X_RADIUS + abs(vector[0]))
         y_max = int(FRAME_Y_RADIUS + abs(vector[1]))
         dots = VMobject(*[
-            Dot(x * RIGHT + y * UP)
-            for x in range(-x_max, x_max)
+            Dot(x * RIGHT + y * UP) for x in range(-x_max, x_max)
             for y in range(-y_max, y_max)
         ])
         dots.set_fill(BLACK, opacity=0)
         dots_halfway = dots.copy().shift(vector / 2).set_fill(WHITE, 1)
         dots_end = dots.copy().shift(vector)
 
-        self.play(Transform(
-            dots, dots_halfway, rate_func=rush_into
-        ))
-        self.play(Transform(
-            dots, dots_end, rate_func=rush_from
-        ))
+        self.play(Transform(dots, dots_halfway, rate_func=rush_into))
+        self.play(Transform(dots, dots_end, rate_func=rush_from))
         self.remove(dots)
 
 
@@ -287,7 +272,7 @@ class LinearTransformationScene(VectorScene):
             "x_min": -FRAME_WIDTH / 2,
             "y_max": FRAME_WIDTH / 2,
             "y_min": -FRAME_WIDTH / 2,
-            "faded_line_ratio": 0
+            "faded_line_ratio": 0,
         },
         "background_plane_kwargs": {
             "color": GREY,
@@ -321,9 +306,7 @@ class LinearTransformationScene(VectorScene):
         self.moving_mobjects = []
 
         self.t_matrix = np.array(self.t_matrix)
-        self.background_plane = NumberPlane(
-            **self.background_plane_kwargs
-        )
+        self.background_plane = NumberPlane(**self.background_plane_kwargs)
 
         if self.show_coordinates:
             self.background_plane.add_coordinates()
@@ -369,7 +352,7 @@ class LinearTransformationScene(VectorScene):
             stroke_color=color,
             stroke_width=stroke_width,
             fill_color=color,
-            fill_opacity=opacity
+            fill_opacity=opacity,
         )
         square.move_to(self.plane.coords_to_point(0, 0), DL)
         return square
@@ -377,19 +360,15 @@ class LinearTransformationScene(VectorScene):
     def add_unit_square(self, animate=False, **kwargs):
         square = self.get_unit_square(**kwargs)
         if animate:
-            self.play(
-                DrawBorderThenFill(square),
-                Animation(Group(*self.moving_vectors))
-            )
+            self.play(DrawBorderThenFill(square),
+                      Animation(Group(*self.moving_vectors)))
         self.add_transformable_mobject(square)
         self.bring_to_front(*self.moving_vectors)
         self.square = square
         return self
 
     def add_vector(self, vector, color=YELLOW, **kwargs):
-        vector = VectorScene.add_vector(
-            self, vector, color=color, **kwargs
-        )
+        vector = VectorScene.add_vector(self, vector, color=color, **kwargs)
         self.moving_vectors.append(vector)
         return vector
 
@@ -398,18 +377,19 @@ class LinearTransformationScene(VectorScene):
         self.add_foreground_mobject(coords)
         return coords
 
-    def add_transformable_label(
-            self, vector, label,
-            transformation_name="L",
-            new_label=None,
-            **kwargs):
+    def add_transformable_label(self,
+                                vector,
+                                label,
+                                transformation_name="L",
+                                new_label=None,
+                                **kwargs):
         label_mob = self.label_vector(vector, label, **kwargs)
         if new_label:
             label_mob.target_text = new_label
         else:
             label_mob.target_text = "%s(%s)" % (
                 transformation_name,
-                label_mob.get_tex()
+                label_mob.get_tex(),
             )
         label_mob.vector = vector
         label_mob.kwargs = kwargs
@@ -467,9 +447,8 @@ class LinearTransformationScene(VectorScene):
 
     def get_transformable_label_movement(self):
         for l in self.transformable_labels:
-            l.target = self.get_vector_label(
-                l.vector.target, l.target_text, **l.kwargs
-            )
+            l.target = self.get_vector_label(l.vector.target, l.target_text,
+                                             **l.kwargs)
         return self.get_piece_movement(self.transformable_labels)
 
     def apply_matrix(self, matrix, **kwargs):
@@ -501,15 +480,13 @@ class LinearTransformationScene(VectorScene):
             added_anims = []
         if "run_time" not in kwargs:
             kwargs["run_time"] = 3
-        anims = [
+        anims = ([
             ApplyPointwiseFunction(function, t_mob)
             for t_mob in self.transformable_mobjects
         ] + [
             self.get_vector_movement(function),
             self.get_transformable_label_movement(),
             self.get_moving_mobject_movement(function),
-        ] + [
-            Animation(f_mob)
-            for f_mob in self.foreground_mobjects
-        ] + added_anims
+        ] + [Animation(f_mob)
+             for f_mob in self.foreground_mobjects] + added_anims)
         self.play(*anims, **kwargs)
